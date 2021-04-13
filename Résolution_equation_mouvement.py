@@ -7,8 +7,6 @@ Created on Tue Apr 13 09:17:24 2021
 """
 import numpy as np
 
-ds = 1 #km
-
 
 def dérivée(u_prec, u, s, n,ds):
     
@@ -22,13 +20,13 @@ def dérivée(u_prec, u, s, n,ds):
     
     dn_y = n(u[0]) - n(u[0] - ds * np.array([0,1]))
     
-    dx = u[0,0] - u_prec[0,0] #Problème aussi
+    #dx = u[0,0] - u_prec[0,0] 
     
-    dy = u[0,1] - u_prec[0,1]
+    #dy = u[0,1] - u_prec[0,1]
     
-    grad_n = (dn_x/dx) * np.array([1,0]) + (dn_y/dy) * np.array([0,1])
+    grad_n = (dn_x/ds) * np.array([1,0]) + (dn_y/ds) * np.array([0,1])
     
-    print("grad_n =", grad_n)
+    #print("grad_n =", grad_n)
     
     du[0] = u[1]
     du[1] = grad_n - dn/ds * u[1]
@@ -67,13 +65,13 @@ def RK4(tot_trajec, step, v_ini, derive, n,ds):
         
         #On change la fonction utilisée pour le calcul de dérivée
         
-        d1 = np.array(derive(v[i-2],v[i-1], s[i-1], n,ds))
+        d1 = derive(v[i-2],v[i-1], s[i-1], n,ds)
         
-        d2 = np.array(derive(v[i-2]+ d1 * step/2 , v[i-1] + d1 * step/2, s[i-1] + step/2, n,ds))
+        d2 = derive(v[i-2]+ d1 * step/2 , v[i-1] + d1 * step/2, s[i-1] + step/2, n,ds)
         
-        d3 = np.array(derive(v[i-2]+ d2 * step/2 , v[i-1] + d2 * step/2, s[i-1] + step/2, n,ds))
+        d3 = derive(v[i-2]+ d2 * step/2 , v[i-1] + d2 * step/2, s[i-1] + step/2, n,ds)
         
-        d4 = np.array(derive(v[i-2] + d3 * step , v[i-1] + d3 * step, s[i-1] + step, n,ds))
+        d4 = derive(v[i-2] + d3 * step , v[i-1] + d3 * step, s[i-1] + step, n,ds)
         
         v[i] = v[i-1] + (d1 + 2 * d2 + 2 * d3 + d4) * step / 6
         
