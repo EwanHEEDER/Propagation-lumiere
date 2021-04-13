@@ -26,7 +26,7 @@ from Résolution_equation_mouvement import dérivée, RK4
 
 ds = 1 #km
 
-tot_trajec = 200
+tot_trajec = 1000
 
 
 
@@ -35,12 +35,10 @@ tot_trajec = 200
 # Interface eau/air
 
 
+v_ini = np.array([[0,0],[0,1]])
 
-
-v_ini = np.array([[0,0],[1, 0.7]])
-
-s, v = RK4(tot_trajec, ds,v_ini,dérivée, n_interface)
+s, v = RK4(tot_trajec, ds,v_ini,dérivée, n_grad,ds)
 
 plt.plot(v[:,0,0],v[:,0,1])
-plt.axvline(150, color = 'black')
-print(v)
+#plt.axvline(150, color = 'black')
+#print(v)
