@@ -7,13 +7,13 @@ Created on Tue Apr 13 09:20:23 2021
 """
 
 
-def n_grad(position, n1 = 3, n2 = 1.0, largeur = 1000):
+def n_grad(position, n1 = 1.000157, n2 = 1.0, hauteur = 1000):
     
-    if position[1] <= largeur:
+    if position[1] <= hauteur:
         
         delta_n =n2 - n1
     
-        return (delta_n / largeur) * position[1] + n1
+        return (delta_n / hauteur) * position[1] + n1
     
     else:
         
