@@ -27,7 +27,7 @@ paramètres = {"Pas d'intégration": 1,               #en km
               "Angle initial": np.pi/100000,                   #angle avec l'horizontale, en rad
               "Fonction dérivée": dérivée,          #fonction utilisée pour le calcul de dérivée
               "Pas de calcul du gradient": 0.5,
-              "Calcul d'indice": n_grad} 
+              "Calcul d'indice": n_grad}
 
 
 
@@ -44,7 +44,7 @@ x = v[:,0,0][masque]
 
 y = v[:,0,1][masque]
 
-plt.figure(dpi = 1200)
+plt.figure(dpi = 600)
 plt.plot(x,y)
 plt.xlabel("X (en km)")
 plt.ylabel("Y (en km)")
