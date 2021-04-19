@@ -1,10 +1,6 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Apr 13 09:20:23 2021
+import numpy as np
 
-@author: ewanheeder
-"""
+from Prisme import prisme 
 
 def n_grad(position, n1 = 1.000157, n2 = 1.0, hauteur = 1000):
     
@@ -33,9 +29,15 @@ def n_prisme(position, Lambda, n1, nD = 1.72, VD = 29.3): #Possible changer verr
 
     """ Input: position = Vecteur position (x,y)
                Lambda = longueur donde du rayon (nm)
+               prisme = prisme dans lequel on envoie le rayon défini par ses sommets
                n1 = Indice du milieu dans lequel se trouve le prisme
                nd, vd = paramètres du verre; indice pour la raie de référence D & nombre d'Abbe du verre"""
-    if position>=2:
+    
+   
+    f1, f2 = prisme(2,8,7)      #fonction du côté gauche puis droit de notre prisme
+
+        
+    if (position[1] <= f1(position[0])) & (position[1] <= f2(position[0])): 
         
         lC=656.3
         lD=589.3
@@ -52,6 +54,6 @@ def n_prisme(position, Lambda, n1, nD = 1.72, VD = 29.3): #Possible changer verr
         
         return n1
         
-        
-print(n_prisme(3,420,1.0))
+position = np.array([2,0])
+print(n_prisme(position,420,1.0))
     

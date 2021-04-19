@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Apr 10 15:04:09 2021
-
-@author: ewanheeder
-"""
-
 """Indexation:
     
     v[a,b,c]: a:[0, tot_trajec]; Point considéré
@@ -19,12 +11,14 @@ import matplotlib.pyplot as plt
 
 
 
-from Indice import n_grad, n_interface
+from Indice import n_grad, n_interface, n_prisme
 from Résolution_equation_mouvement import dérivée, RK4
+from Prisme import prisme
+
 
 paramètres = {"Pas d'intégration": 1,               #en km
               "Longueur du trajet": 400,            #abscisse curviligne, en km
-              "Angle initial": np.pi/100000,                   #angle avec l'horizontale, en rad
+              "Angle initial": np.pi/100000,        #angle avec l'horizontale, en rad
               "Fonction dérivée": dérivée,          #fonction utilisée pour le calcul de dérivée
               "Pas de calcul du gradient": 0.5,
               "Calcul d'indice": n_grad}

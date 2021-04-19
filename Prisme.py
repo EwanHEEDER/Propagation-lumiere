@@ -1,18 +1,10 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Apr 16 09:53:59 2021
-
-@author: ewanheeder
-"""
-
 import numpy as np
 
 import matplotlib.pyplot as plt
 
-def f(x1, x2, y3):
+def prisme(x1, x2, y3):
     
-    x3 = (x1 + x2)/2
+    """Prisme isocèle"""
     
     a1 = (2 * y3)/(x2 - x1)
     
@@ -28,14 +20,25 @@ def f(x1, x2, y3):
     fig=plt.figure()
     
     ax = fig.add_subplot(111)
+   
+    eq1 = a1 * x + b1
+    eq2 = a2 * x + b2
     
-    plt.plot(x, a1 * x + b1, 'b')
-    plt.plot(x, a2 * x + b2, 'r')
+    def f1(x):
+        return a1 * x + b1
+   
+    def f2(x):
+        return a2 * x + b2
+    
+    
+    plt.plot(x[eq1<=y3], eq1[eq1<=y3], 'b')
+    plt.plot(x[eq2<=y3], eq2[eq2<=y3], 'r')
     plt.hlines(0,x1, x2)
     
     plt.xlim(0,10)
     plt.ylim(0,10)
     ax.set_aspect('equal')
     
-    
-f(1,3,5)
+    return (f1, f2)
+
+print(prisme(2,8,7))
