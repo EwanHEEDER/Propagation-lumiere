@@ -14,22 +14,26 @@ import matplotlib.pyplot as plt
 from Indice import n_grad, n_interface, n_prisme
 from Résolution_equation_mouvement import dérivée, RK4
 from Prisme import prisme
+from Mvt_prisme import dérivée_prisme, RK4_prisme
 
 
 paramètres = {"Pas d'intégration": 1,               #en km
               "Longueur du trajet": 400,            #abscisse curviligne, en km
               "Angle initial": np.pi/100000,        #angle avec l'horizontale, en rad
-              "Fonction dérivée": dérivée,          #fonction utilisée pour le calcul de dérivée
+              "Fonction dérivée": dérivée_prisme,          #fonction utilisée pour le calcul de dérivée
               "Pas de calcul du gradient": 0.5,
-              "Calcul d'indice": n_grad}
+              "Indice en dehors prisme": 1.0,
+              "lambda": 477,                         #nm
+              "Calcul d'indice": n_prisme}
 
 
 
 v_ini = np.array([[0,1.50e-3],[np.cos(paramètres["Angle initial"]),np.sin(paramètres["Angle initial"])]])
 
-s, v = RK4(paramètres["Longueur du trajet"], paramètres["Pas d'intégration"],v_ini,
+s, v = RK4_prisme(paramètres["Longueur du trajet"], paramètres["Pas d'intégration"],v_ini,
            paramètres["Fonction dérivée"], paramètres["Calcul d'indice"],
-           paramètres["Pas de calcul du gradient"])
+           paramètres["Pas de calcul du gradient"], paramètres["lambda"], 
+           paramètres["Indice en dehors prisme"])
 
 
 masque = v[:,0,1] >= 0
