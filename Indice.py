@@ -14,8 +14,6 @@ def n_grad(position, n1 = 1.000157, n2 = 1.0, hauteur = 1000):
         
         return n2
 
-
-
 def n_interface(position, dioptre = 150, n1 = 1., n2 = 2):
     
     if position[0]< 150:
@@ -36,7 +34,6 @@ def n_prisme(position, Lambda, n1, nD = 1.72, VD = 29.3): #Possible changer verr
    
     f1, f2 = prisme(2,8,7)      #fonction du côté gauche puis droit de notre prisme
 
-        
     if (position[1] <= f1(position[0])) & (position[1] <= f2(position[0])): 
         
         lC=656.3
@@ -48,12 +45,12 @@ def n_prisme(position, Lambda, n1, nD = 1.72, VD = 29.3): #Possible changer verr
         
         n = A + B/(Lambda**2)
         
-        return n
-        
     else:
         
-        return n1
+        n = n1
+    
+    return n
         
 position = np.array([2,0])
-print(n_prisme(position,420,1.0))
+print(type(n_prisme(position,420,1.0)))
     

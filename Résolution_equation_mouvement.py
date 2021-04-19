@@ -1,8 +1,12 @@
 import numpy as np
 
 
-def dérivée(u_prec, u, s, n,ds, dl):
-    
+def dérivée(u_prec, u, s, n, ds, dl):
+    """ u_prec : coordonnées au pas précédent
+        u : coordonnées au pas actuel
+        s : abscisse curviligne au pas actuel
+        ds : voir step
+    """
     # u est un tuple (r, dr/ds). /!\ r et dr/dt sont des vecteurs
     
     du = np.empty(np.shape(u))
@@ -12,11 +16,7 @@ def dérivée(u_prec, u, s, n,ds, dl):
     dn_x = n(u[0]) - n(u[0] - dl * np.array([1,0])) #Problème
     
     dn_y = n(u[0]) - n(u[0] - dl * np.array([0,1]))
-    
-    #dx = u[0,0] - u_prec[0,0] 
-    
-    #dy = u[0,1] - u_prec[0,1]
-    
+        
     grad_n = (dn_x/dl) * np.array([1,0]) + (dn_y/dl) * np.array([0,1])
     
     #print("grad_n =", grad_n)
@@ -27,7 +27,13 @@ def dérivée(u_prec, u, s, n,ds, dl):
     return du # une liste , (dr/ds, d^2(r) / ds^2)
 
 def RK4(tot_trajec, step, v_ini, derive, n, dl):
-
+    """ tot_trajec : longueur totale parcourue en abscisse curviligne (float)
+        step : pas d'intégration (float)
+        v_ini : paramètres initiaux (array 2x2)
+        derive : fonction qui traduit l'équa diff
+        n : fonction de calcul d'indice
+        dl : déplacement infinitasimal (calcul du gradient)
+    """
     # Création du tableau d'abscisse curviligne
     
     num_points = int(tot_trajec / step) + 1     # nombre d'éléments
