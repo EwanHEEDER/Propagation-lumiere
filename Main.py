@@ -22,9 +22,9 @@ wavelength = np.linspace(380,480, 300)
 
 colors = [cmx.rainbow(i) for i in np.linspace(0, 1, len(wavelength))]
 
-paramètres = {"Pas d'intégration": 0.1,               #en km
+paramètres = {"Pas d'intégration": 0.05,               #en km
               "Longueur du trajet": 20,            #abscisse curviligne, en km
-              "Angle initial": np.pi/15,        #angle avec l'horizontale, en rad
+              "Angle initial": np.pi/10,        #angle avec l'horizontale, en rad
               "Fonction dérivée": dérivée_prisme,          #fonction utilisée pour le calcul de dérivée
               "Pas de calcul du gradient": 0.1,
               "Indice en dehors prisme": 1.5,
@@ -74,7 +74,7 @@ for i in range(wavelength.size):
     y = v[:,0,1][masque]
 
 
-    plt.plot(x,y,'.', markersize = 1, color = colors[i])
+    plt.plot(x,y,'.', markersize = 2.5, color = colors[i])
     
     print("i = ", i , "sur ", wavelength.size - 1)
     
