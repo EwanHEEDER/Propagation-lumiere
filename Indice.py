@@ -23,7 +23,7 @@ def n_interface(position, dioptre = 150, n1 = 1., n2 = 2):
     return n
 
 
-def n_prisme(position, Lambda, n1, nD = 1.72, VD = 29.3): #Possible changer verre. Par défaut --> Crown C
+def n_prisme(position, Lambda, n1, nD = 1.72, VD = 29.3): #Possible changer verre. Par défaut --> EDF
 
     """ Input: position = Vecteur position (x,y)
                Lambda = longueur donde du rayon (nm)
