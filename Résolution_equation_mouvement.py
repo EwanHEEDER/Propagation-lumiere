@@ -1,7 +1,12 @@
 import numpy as np
 
 
-def dérivée(u_prec, u, s, n, ds, dl):
+def dérivée(u_prec, u, s, dictionnaire):
+    
+    n = dictionnaire["Calcul d'indice"]
+    ds = dictionnaire["Pas d'intégration"]
+    dl = dictionnaire["Pas de calcul du gradient"]
+    
     """ u_prec : coordonnées au pas précédent
         u : coordonnées au pas actuel
         s : abscisse curviligne au pas actuel
@@ -11,11 +16,11 @@ def dérivée(u_prec, u, s, n, ds, dl):
     
     du = np.empty(np.shape(u))
     
-    dn = n(u[0]) - n(u_prec[0])
+    dn = n(u[0], dictionnaire) - n(u_prec[0], dictionnaire)
     
-    dn_x = n(u[0]) - n(u[0] - dl * np.array([1,0])) #Problème
+    dn_x = n(u[0], dictionnaire) - n(u[0] - dl * np.array([1,0]), dictionnaire) #Problème
     
-    dn_y = n(u[0]) - n(u[0] - dl * np.array([0,1]))
+    dn_y = n(u[0], dictionnaire) - n(u[0] - dl * np.array([0,1]), dictionnaire)
         
     grad_n = (dn_x/dl) * np.array([1,0]) + (dn_y/dl) * np.array([0,1])
     
@@ -26,13 +31,18 @@ def dérivée(u_prec, u, s, n, ds, dl):
     
     return du # une liste , (dr/ds, d^2(r) / ds^2)
 
-def RK4(tot_trajec, step, v_ini, derive, n, dl):
+def RK4(dictionnaire):
+    
+    tot_trajec = dictionnaire["Longueur du trajet"]
+    step = dictionnaire["Pas d'intégration"]
+    v_ini = np.array([dictionnaire["Position initiale"],
+                      [np.cos(dictionnaire["Angle initial"]),np.sin(dictionnaire["Angle initial"])]])
+    derive = dictionnaire["Fonction dérivée"]
+    
     """ tot_trajec : longueur totale parcourue en abscisse curviligne (float)
         step : pas d'intégration (float)
         v_ini : paramètres initiaux (array 2x2)
         derive : fonction qui traduit l'équa diff
-        n : fonction de calcul d'indice
-        dl : déplacement infinitasimal (calcul du gradient)
     """
     # Création du tableau d'abscisse curviligne
     
@@ -64,13 +74,13 @@ def RK4(tot_trajec, step, v_ini, derive, n, dl):
         
         #On change la fonction utilisée pour le calcul de dérivée
         
-        d1 = derive(v[i-2],v[i-1], s[i-1], n,step, dl)
+        d1 = derive(v[i-2],v[i-1], s[i-1], dictionnaire)
         
-        d2 = derive(v[i-2]+ d1 * step/2 , v[i-1] + d1 * step/2, s[i-1] + step/2, n,step, dl)
+        d2 = derive(v[i-2]+ d1 * step/2 , v[i-1] + d1 * step/2, s[i-1] + step/2, dictionnaire)
         
-        d3 = derive(v[i-2]+ d2 * step/2 , v[i-1] + d2 * step/2, s[i-1] + step/2, n,step, dl)
+        d3 = derive(v[i-2]+ d2 * step/2 , v[i-1] + d2 * step/2, s[i-1] + step/2, dictionnaire)
         
-        d4 = derive(v[i-2] + d3 * step , v[i-1] + d3 * step, s[i-1] + step, n,step, dl)
+        d4 = derive(v[i-2] + d3 * step , v[i-1] + d3 * step, s[i-1] + step, dictionnaire)
         
         v[i] = v[i-1] + (d1 + 2 * d2 + 2 * d3 + d4) * step / 6
         
