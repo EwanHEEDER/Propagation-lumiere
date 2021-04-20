@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 from Indice import n_grad, n_interface, n_prisme
 from Résolution_equation_mouvement import dérivée, RK4
 from Prisme import prisme
-from Mvt_prisme import dérivée_prisme, RK4_prisme
 from Modèles import propagation_grad, propagation_interface, propagation_prisme, faisceau_prisme
 import matplotlib.cm as cmx
 
