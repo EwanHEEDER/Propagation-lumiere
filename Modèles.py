@@ -191,17 +191,3 @@ def faisceau_prisme(dictionnaire):
     
     plt.xlim(0,15)
     plt.ylim(0,15)
-
-def phi_sup(r, dictionnaire):
-    return - dictionnaire["Constante G"]*dictionnaire["Masse amas"]/r
-
-def phi_inf(r, dictionnaire):
-    
-    G = dictionnaire["Constante G"]
-    M = dictionnaire["Masse amas"]
-    C = dictionnaire["Concentration"]
-    R = dictionnaire["R"]
-    g = 1/(np.log(1+C)-C/(1+C))
-    alpha = r/R
-    
-    return -(G*M)/r*g*(np.log(1+C*alpha)-C*alpha/(1+C*alpha))

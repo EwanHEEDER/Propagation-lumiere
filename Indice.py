@@ -1,7 +1,6 @@
 import numpy as np
 
 from Prisme import prisme
-from Modèles import phi_inf, phi_sup
 
 def n_grad(position, dictionnaire):
     
@@ -65,6 +64,22 @@ def n_prisme(position, dictionnaire):       #Possible changer verre. Par défaut
         n = n1
     
     return n
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def phi_sup(r, dictionnaire):
+    return - dictionnaire["Constante G"]*dictionnaire["Masse amas"]/r
+
+def phi_inf(r, dictionnaire):
+    
+    G = dictionnaire["Constante G"]
+    M = dictionnaire["Masse amas"]
+    C = dictionnaire["Concentration"]
+    R = dictionnaire["R"]
+    g = 1/(np.log(1+C)-C/(1+C))
+    alpha = r/R
+    
+    return -(G*M)/r*g*(np.log(1+C*alpha)-C*alpha/(1+C*alpha))
         
 def n_amas(position, dictionnaire):
     
@@ -79,3 +94,4 @@ def n_amas(position, dictionnaire):
         phi = phi_sup(r, dictionnaire)
     
     return 1-2*phi/c**2
+

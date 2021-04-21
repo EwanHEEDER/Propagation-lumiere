@@ -7,6 +7,7 @@ def dérivée(u_prec, u, s, dictionnaire):
     ds = dictionnaire["Pas d'intégration"]
     dl = dictionnaire["Pas de calcul du gradient"]
     
+    
     """ u_prec : coordonnées au pas précédent
         u : coordonnées au pas actuel
         s : abscisse curviligne au pas actuel
@@ -36,8 +37,9 @@ def RK4(dictionnaire):
     tot_trajec = dictionnaire["Longueur du trajet"]
     step = dictionnaire["Pas d'intégration"]
     v_ini = np.array([dictionnaire["Position initiale"],
-                      [np.cos(dictionnaire["Angle initial"]),np.sin(dictionnaire["Angle initial"])]])
+                      [np.cos(dictionnaire["Angle initial "]),np.sin(dictionnaire["Angle initial"])]])
     derive = dictionnaire["Fonction dérivée"]
+    
     
     """ tot_trajec : longueur totale parcourue en abscisse curviligne (float)
         step : pas d'intégration (float)
@@ -128,9 +130,11 @@ def RK4_3D(dictionnaire):
     
     tot_trajec = dictionnaire["Longueur du trajet"]
     step = dictionnaire["Pas d'intégration"]
-    v_ini = np.array([dictionnaire["Position centre galaxie"],
-                      [np.cos(dictionnaire["Angle initial"]),np.sin(dictionnaire["Angle initial"])]])
     derive = dictionnaire["Fonction dérivée"]
+    theta = dictionnaire["Angle initial en 3D"][0]
+    beta = dictionnaire["Angle initial en 3D"][1]
+    v_ini = np.array([dictionnaire["Position centre galaxie"],
+                      [np.sin(beta)*np.cos(theta), np.sin(beta)*np.sin(theta), np.cos(beta)]])
     
     """ tot_trajec : longueur totale parcourue en abscisse curviligne (float)
         step : pas d'intégration (float)
