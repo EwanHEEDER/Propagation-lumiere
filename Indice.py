@@ -1,8 +1,14 @@
 import numpy as np
 
-from Prisme import prisme 
+from Prisme import prisme
+from Modèles import phi_inf, phi_sup
 
-def n_grad(position, n1 = 1.000157, n2 = 1.0, hauteur = 1000):
+def n_grad(position, dictionnaire):
+    
+    n1, n2 = dictionnaire["Indice 1 gradient"], dictionnaire["Indice 2 gradient"]
+    
+    hauteur = dictionnaire["Hauteur du gradient"]
+    
     
     if position[1] <= hauteur:
         
@@ -14,16 +20,25 @@ def n_grad(position, n1 = 1.000157, n2 = 1.0, hauteur = 1000):
         
         return n2
 
-def n_interface(position, dioptre = 150, n1 = 1., n2 = 2):
+def n_interface(position, dictionnaire):
     
-    if position[0]< 150:
+    dioptre = dictionnaire["Position dioptre"]
+    n1 = dictionnaire["Indice 1 interface"]
+    n2 = dictionnaire["Indice 2 interface"]
+    
+    if position[0]< dioptre:
         n=n1
     else:
         n=n2
     return n
 
 
-def n_prisme(position, Lambda, n1, nD = 1.72, VD = 29.3): #Possible changer verre. Par défaut --> Crown C
+def n_prisme(position, dictionnaire):       #Possible changer verre. Par défaut --> EDF
+    
+    Lambda = dictionnaire["Lambda"]
+    n1 = dictionnaire["Indice en dehors du prisme"]
+    nD, VD = dictionnaire["Verre"][0], dictionnaire["Verre"][1]
+
 
     """ Input: position = Vecteur position (x,y)
                Lambda = longueur donde du rayon (nm)
@@ -32,7 +47,7 @@ def n_prisme(position, Lambda, n1, nD = 1.72, VD = 29.3): #Possible changer verr
                nd, vd = paramètres du verre; indice pour la raie de référence D & nombre d'Abbe du verre"""
     
    
-    f1, f2 = prisme(2,8,7)      #fonction du côté gauche puis droit de notre prisme
+    f1, f2 = prisme(dictionnaire)      #fonction du côté gauche puis droit de notre prisme
 
     if (position[1] <= f1(position[0])) & (position[1] <= f2(position[0])): 
         
@@ -51,6 +66,16 @@ def n_prisme(position, Lambda, n1, nD = 1.72, VD = 29.3): #Possible changer verr
     
     return n
         
-position = np.array([2,0])
-print(type(n_prisme(position,420,1.0)))
+def n_amas(position, dictionnaire):
     
+    c = dictionnaire["Vitesse lumière"]
+    R = dictionnaire["R"]
+    centre = dictionnaire["Position centre amas"]
+    r = np.sqrt((position[0]-centre[0])**2 + (position[1]-centre[1])**2 + (position[2]-centre[2])**2)
+    
+    if r<=R:
+        phi = phi_inf(r, dictionnaire)
+    else : 
+        phi = phi_sup(r, dictionnaire)
+    
+    return 1-2*phi/c**2

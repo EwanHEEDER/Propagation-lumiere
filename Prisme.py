@@ -2,7 +2,11 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-def prisme(x1, x2, y3):
+def prisme(dictionnaire):
+    
+    x1 = dictionnaire["Prisme"][0]
+    x2 = dictionnaire["Prisme"][1]
+    y3 = dictionnaire["Prisme"][2]
     
     """Prisme isocèle"""
     
@@ -39,6 +43,4 @@ def prisme(x1, x2, y3):
 #   plt.ylim(0,10)
 #   ax.set_aspect('equal')
     
-    return (f1, f2)
-
-print(prisme(2,8,7))
+    return f1, f2
