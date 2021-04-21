@@ -11,14 +11,17 @@ import matplotlib.pyplot as plt
 
 
 
-from Indice import n_grad, n_interface, n_prisme
-from Résolution_equation_mouvement import dérivée, RK4
+from Indice import n_grad, n_interface, n_prisme, n_amas
+from Résolution_equation_mouvement import dérivée, RK4, dérivée_3D, RK4_3D
 from Prisme import prisme
-from Mvt_prisme import dérivée_prisme, RK4_prisme
 from Modèles import propagation_grad, propagation_interface, propagation_prisme, faisceau_prisme
 import matplotlib.cm as cmx
 
-paramètres = {"Pas d'intégration": 0.01,               #en km
+#Conversion en unité SI:
+al = 9.461e15 #m
+m_S = 1.988e30 #kg
+
+paramètres = {"Pas d'intégration": 0.01,             #en km
               "Longueur du trajet": 20,               #abscisse curviligne, en km
               "Position initiale": [0,0.5],              #coordonnées du point de départ du rayon
               "Angle initial": np.pi/15,              #angle avec l'horizontale, en rad
@@ -34,9 +37,30 @@ paramètres = {"Pas d'intégration": 0.01,               #en km
               "Indice en dehors du prisme": 1.5,
               "Lambda": 634,
               "Nombre lambda": 20,          #nm
-              "Prisme": (2,8,6),   #Géométrie du prisme (x1, x2, y3), prisme de base x1x2 au sol, de hauteur y3
-              "Verre": (1.72, 29.3)}        #propriétés du verre; tuple : (nD, Nombre d'Abbe)   
+              "Prisme": (2,8,6),        #Géométrie du prisme (x1, x2, y3), prisme de base x1x2 au sol, de hauteur y3
+              "Verre": (1.72, 29.3),    #propriétés du verre; tuple : (nD, Nombre d'Abbe)  
+              "Vitesse lumière": 3e8,   #m/s
+              "Constante G": 6.67e-11,  #m^3.kg^-1.s^-2    
+              "Masse amas": 1e14*m_S,   #kg 
+              "Concentration": 10,      #plus il est grand, plus la masse est concentrée au centre
+              "R": 5e6*al,
+              "Position centre galaxie": [8e5*al, 0, 0],   #toujours fixé
+              "Position centre amas": [8e5*al/2, 0, 0]}  #peut être modifié mais dois toujours être le centre de la galaxie et l'observateur     
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
+
+
+
+
+
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  DICTIONNAIRES OPTIMISÉS SELON LES MODÈLES  ~~~~~~~~~~~~~~~~~~~~~~
 
 opti_interface = {"Pas d'intégration": 0.01,          #en m     
               "Longueur du trajet": 30,               #abscisse curviligne, en m
@@ -77,7 +101,7 @@ opti_prisme = {"Pas d'intégration": 0.01,               #en m
               "Prisme": (3,9,6),   
               "Verre": (1.72, 29.3)}
 
-propagation_prisme(opti_prisme)
+#propagation_prisme(opti_prisme)
 
 
 opti_faisceau = {"Pas d'intégration": 0.01,               

@@ -1,6 +1,7 @@
 import numpy as np
 
-from Prisme import prisme 
+from Prisme import prisme
+from Modèles import phi_inf, phi_sup
 
 def n_grad(position, dictionnaire):
     
@@ -65,4 +66,16 @@ def n_prisme(position, dictionnaire):       #Possible changer verre. Par défaut
     
     return n
         
+def n_amas(position, dictionnaire):
     
+    c = dictionnaire["Vitesse lumière"]
+    R = dictionnaire["R"]
+    centre = dictionnaire["Position centre amas"]
+    r = np.sqrt((position[0]-centre[0])**2 + (position[1]-centre[1])**2 + (position[2]-centre[2])**2)
+    
+    if r<=R:
+        phi = phi_inf(r, dictionnaire)
+    else : 
+        phi = phi_sup(r, dictionnaire)
+    
+    return 1-2*phi/c**2
