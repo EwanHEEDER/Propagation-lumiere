@@ -7,6 +7,7 @@ def dérivée(u_prec, u, s, dictionnaire):
     ds = dictionnaire["Pas d'intégration"]
     dl = dictionnaire["Pas de calcul du gradient"]
     
+    
     """ u_prec : coordonnées au pas précédent
         u : coordonnées au pas actuel
         s : abscisse curviligne au pas actuel
@@ -36,8 +37,9 @@ def RK4(dictionnaire):
     tot_trajec = dictionnaire["Longueur du trajet"]
     step = dictionnaire["Pas d'intégration"]
     v_ini = np.array([dictionnaire["Position initiale"],
-                      [np.cos(dictionnaire["Angle initial"]),np.sin(dictionnaire["Angle initial"])]])
+                      [np.cos(dictionnaire["Angle initial "]),np.sin(dictionnaire["Angle initial"])]])
     derive = dictionnaire["Fonction dérivée"]
+    
     
     """ tot_trajec : longueur totale parcourue en abscisse curviligne (float)
         step : pas d'intégration (float)
@@ -84,6 +86,8 @@ def RK4(dictionnaire):
         
         v[i] = v[i-1] + (d1 + 2 * d2 + 2 * d3 + d4) * step / 6
         
+        print("Point ", i , " sur ", num_points+1)
+        
         
    
     # argument de sortie
@@ -92,11 +96,19 @@ def RK4(dictionnaire):
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ AMAS DE GALAXIES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+
 def dérivée_3D(u_prec, u, s, dictionnaire):
     
     n = dictionnaire["Calcul d'indice"]
     ds = dictionnaire["Pas d'intégration"]
-    dl = dictionnaire["Pas de calcul du gradient"]
+    
+    G = dictionnaire["Constante G"]
+    M = dictionnaire["Masse amas"]
+    c = dictionnaire["Vitesse lumière"]
+    centre = dictionnaire["Position centre amas"]
+    
+    r = np.sqrt((u[0,0]-centre[0])**2 + (u[0,1]-centre[1])**2 + (u[0,2]-centre[2])**2)
     
     """ u_prec : coordonnées au pas précédent
         u : coordonnées au pas actuel
@@ -109,13 +121,19 @@ def dérivée_3D(u_prec, u, s, dictionnaire):
     
     dn = n(u[0], dictionnaire) - n(u_prec[0], dictionnaire)
     
-    dn_x = n(u[0], dictionnaire) - n(u[0] - dl * np.array([1,0,0]), dictionnaire) #Problème
+#    dn_x = n(u[0], dictionnaire) - n(u[0] - dl * np.array([1,0,0]), dictionnaire) #Problème
     
-    dn_y = n(u[0], dictionnaire) - n(u[0] - dl * np.array([0,1,0]), dictionnaire)
+#    dn_y = n(u[0], dictionnaire) - n(u[0] - dl * np.array([0,1,0]), dictionnaire)
     
-    dn_z =  n(u[0], dictionnaire) - n(u[0] - dl * np.array([0,0,1]), dictionnaire)
+#    dn_z = n(u[0], dictionnaire) - n(u[0] - dl * np.array([0,0,1]), dictionnaire)
+
+    dn_x = - (2*G*M/c**2) * u[0,0]/r**3
+    
+    dn_y = - (2*G*M/c**2) * u[0,1]/r**3
+    
+    dn_z = - (2*G*M/c**2) * u[0,2]/r**3
         
-    grad_n = (dn_x/dl) * np.array([1,0,0]) + (dn_y/dl) * np.array([0,1,0]) + (dn_z/dl) * np.array([0,0,1])
+    grad_n = dn_x * np.array([1,0,0]) + dn_y * np.array([0,1,0]) + dn_z * np.array([0,0,1])
     
     #print("grad_n =", grad_n)
     
@@ -126,11 +144,15 @@ def dérivée_3D(u_prec, u, s, dictionnaire):
 
 def RK4_3D(dictionnaire):
     
+    
+    
     tot_trajec = dictionnaire["Longueur du trajet"]
     step = dictionnaire["Pas d'intégration"]
-    v_ini = np.array([dictionnaire["Position centre galaxie"],
-                      [np.cos(dictionnaire["Angle initial"]),np.sin(dictionnaire["Angle initial"])]])
     derive = dictionnaire["Fonction dérivée"]
+    theta = dictionnaire["Angle initial en 3D"][0]
+    beta = dictionnaire["Angle initial en 3D"][1]
+    v_ini = np.array([dictionnaire["Position centre galaxie"],
+                      [np.sin(beta)*np.cos(theta), np.sin(beta)*np.sin(theta), np.cos(beta)]])
     
     """ tot_trajec : longueur totale parcourue en abscisse curviligne (float)
         step : pas d'intégration (float)
@@ -177,7 +199,10 @@ def RK4_3D(dictionnaire):
         
         v[i] = v[i-1] + (d1 + 2 * d2 + 2 * d3 + d4) * step / 6
         
+        print("Point ", i , " sur ", num_points+1)
         
+        
+    print("Pas = ", dictionnaire["Pas d'intégration"])
    
     # argument de sortie
     return s , v

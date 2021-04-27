@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.cm as cmx
 
-from Résolution_equation_mouvement import dérivée, RK4
+from Resolution_equation_mouvement import dérivée, RK4
 from Indice import n_grad, n_interface, n_prisme
 from Prisme import prisme
 
@@ -191,17 +191,3 @@ def faisceau_prisme(dictionnaire):
     
     plt.xlim(0,15)
     plt.ylim(0,15)
-
-def phi_sup(r, dictionnaire):
-    return - dictionnaire["Constante G"]*dictionnaire["Masse amas"]/r
-
-def phi_inf(r, dictionnaire):
-    
-    G = dictionnaire["Constante G"]
-    M = dictionnaire["Masse amas"]
-    C = dictionnaire["Concentration"]
-    R = dictionnaire["R"]
-    g = 1/(np.log(1+C)-C/(1+C))
-    alpha = r/R
-    
-    return -(G*M)/r*g*(np.log(1+C*alpha)-C*alpha/(1+C*alpha))

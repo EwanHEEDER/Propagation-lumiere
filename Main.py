@@ -8,26 +8,28 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-
+import matplotlib.cm as cmx
+from mpl_toolkits import mplot3d
+from mpl_toolkits.mplot3d import axes3d
 
 
 from Indice import n_grad, n_interface, n_prisme, n_amas
-from Résolution_equation_mouvement import dérivée, RK4, dérivée_3D, RK4_3D
+from Resolution_equation_mouvement import dérivée, RK4, dérivée_3D, RK4_3D
 from Prisme import prisme
-from Modèles import propagation_grad, propagation_interface, propagation_prisme, faisceau_prisme
-import matplotlib.cm as cmx
+from Modeles import propagation_grad, propagation_interface, propagation_prisme, faisceau_prisme
+
 
 #Conversion en unité SI:
 al = 9.461e15 #m
 m_S = 1.988e30 #kg
 
-paramètres = {"Pas d'intégration": 0.01,             #en km
-              "Longueur du trajet": 20,               #abscisse curviligne, en km
+paramètres = {"Pas d'intégration": 2e6*al,             #en km
+              "Longueur du trajet": 2e9*al,               #abscisse curviligne, en km
               "Position initiale": [0,0.5],              #coordonnées du point de départ du rayon
               "Angle initial": np.pi/15,              #angle avec l'horizontale, en rad
-              "Fonction dérivée": dérivée,             #fonction utilisée pour le calcul de dérivée
-              "Calcul d'indice": n_prisme,               #fonction utilisée pour le calcul de l'indice
-              "Pas de calcul du gradient": 0.1,
+              "Fonction dérivée": dérivée_3D,             #fonction utilisée pour le calcul de dérivée
+              "Calcul d'indice": n_amas,               #fonction utilisée pour le calcul de l'indice
+              "Pas de calcul du gradient": 1*al,
               "Indice 1 gradient": 2,
               "Indice 2 gradient": 1,
               "Hauteur du gradient": 100,
@@ -41,20 +43,73 @@ paramètres = {"Pas d'intégration": 0.01,             #en km
               "Verre": (1.72, 29.3),    #propriétés du verre; tuple : (nD, Nombre d'Abbe)  
               "Vitesse lumière": 3e8,   #m/s
               "Constante G": 6.67e-11,  #m^3.kg^-1.s^-2    
-              "Masse amas": 1e14*m_S,   #kg 
+              "Masse amas": 1e15*m_S,   #kg 
               "Concentration": 10,      #plus il est grand, plus la masse est concentrée au centre
               "R": 5e6*al,
-              "Position centre galaxie": [8e5*al, 0, 0],   #toujours fixé
-              "Position centre amas": [8e5*al/2, 0, 0]}  #peut être modifié mais dois toujours être le centre de la galaxie et l'observateur     
+              "Position centre galaxie": [0, 0, -1e9*al],   #toujours fixé --> position initiale
+              "Position centre amas": [0, 0, -1e9*al/2],    #peut être modifié mais dois toujours être le centre de la galaxie et l'observateur 
+              "Angle initial en 3D": (0,-np.pi/1200000000)}          #(theta,beta)    
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+test_grav = {"Pas d'intégration": 2e19,             #en km
+              "Longueur du trajet": 2e22,
+              "Fonction dérivée": dérivée_3D,             #fonction utilisée pour le calcul de dérivée
+              "Calcul d'indice": n_amas,
+              "Vitesse lumière": 3e8,   #m/s
+              "Constante G": 6.67e-11,  #m^3.kg^-1.s^-2    
+              "Masse amas": 4e7*m_S,   #kg 
+              "Concentration": 15,      #plus il est grand, plus la masse est concentrée au centre
+              "R": 22e9,
+              "Position centre galaxie": [0, 0, -1e22],   #toujours fixé --> position initiale
+              "Position centre amas": [0, 0, -1e22/2],    #peut être modifié mais dois toujours être le centre de la galaxie et l'observateur 
+              "Angle initial en 3D": (0,np.pi/3000)}     #(theta,beta)    
 
 
 
+s,v = RK4_3D(test_grav)
+
+print(v[:,0])
+
+v = v[v[:,0,2] <0]
 
 
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+
+ax.plot3D(v[:,0,0], v[:,0,1], v[:,0,2], 'gray')
+
+xdata, ydata, zdata = paramètres["Position centre galaxie"]
+ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='summer')
+
+x,y,z = paramètres["Position centre amas"]
+ax.scatter3D(x, y, z, c=z, cmap='gnuplot')
+
+ax.scatter3D(0,0,0)
+
+"""# draw sphere
+a,b = np.mgrid[0:2*np.pi:20j, 0:np.pi:10j]
+h = ds*1000*np.cos(a)*np.sin(b)
+i = ds*1000*np.sin(a)*np.sin(b)
+j = ds*1000*np.cos(b)
+ax.plot_wireframe(h,i,j)"""
+
+ax.set_xlabel('X axis')
+ax.set_ylabel('Y axis')
+ax.set_zlabel('Z axis')
+
+#ax.view_init(0, 90)
 
 
+ax.set_xlim(-3e21, 3e21)
+ax.set_ylim(-3e21, 3e21)
+ax.set_zlim(-1e25, 1e21)
+
+print(v.shape)
+
+print(s)
+print(max(v[:,0,0]))
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#On 
 
 
 
@@ -117,4 +172,5 @@ opti_faisceau = {"Pas d'intégration": 0.01,
               "Verre": (1.72, 29.3)}       
 
 #faisceau_prisme(opti_faisceau)
+
 
