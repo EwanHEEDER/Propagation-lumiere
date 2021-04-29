@@ -29,7 +29,8 @@ def propagation_grad(dictionnaire):
     y = v[:,0,1][masque]
     
     
-    fig = plt.figure(figsize = (10,10), dpi = 1200)
+#    fig = plt.figure(figsize = (10,10), dpi = 1200)
+    fig = plt.figure(figsize = (10,10))
     
     ax = fig.add_subplot(111)
     ax.set_aspect('equal')
@@ -54,6 +55,7 @@ def propagation_grad(dictionnaire):
     plt.text(x[-1]/2, x[-1] , "À h = " + str(dictionnaire["Hauteur du gradient"])+
              "m, n2 = " + str(dictionnaire["Indice 1 gradient"]),fontsize = 'large')
     
+    return v
 
 def propagation_interface(dictionnaire):
     
@@ -74,7 +76,9 @@ def propagation_interface(dictionnaire):
     x = v[:,0,0][masque]
     y = v[:,0,1][masque]
     
-    fig = plt.figure(figsize = (10,10), dpi = 1200)
+ #   fig = plt.figure(figsize = (10,10), dpi = 1200)
+    fig = plt.figure(figsize = (10,10))
+
     
     ax = fig.add_subplot(111)
     ax.set_aspect('equal')
@@ -99,6 +103,8 @@ def propagation_interface(dictionnaire):
     plt.axhline(normale,linestyle = '--', color = 'orange')
     plt.text(1, 9, "n1 sin(i1) = " + str("%.3f"%(n1 * v_ini[1,1])) + "\n" + "n2 sin(i2) = " + 
              str("%.3f"%(n2 * (vecteur[1]/np.linalg.norm(vecteur)))), fontsize = 'xx-large')
+    
+    return v
     
 def propagation_prisme(dictionnaire):
     
@@ -191,3 +197,7 @@ def faisceau_prisme(dictionnaire):
     
     plt.xlim(0,15)
     plt.ylim(0,15)
+
+def test(x):
+    
+    print(x)

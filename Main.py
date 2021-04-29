@@ -2,7 +2,7 @@
     
     v[a,b,c]: a:[0, tot_trajec]; Point considéré
               b:{0,1}; vecteur position ou dérivée du vecteur position
-              c: {0,1}; Coordonnée du vecteur considéré"""
+              c: {0,1,2}; Coordonnée du vecteur considéré"""
 
 
 
@@ -23,19 +23,19 @@ from Modeles import propagation_grad, propagation_interface, propagation_prisme,
 al = 9.461e15 #m
 m_S = 1.988e30 #kg
 
-paramètres = {"Pas d'intégration": 2e6*al,             #en km
-              "Longueur du trajet": 2e9*al,               #abscisse curviligne, en km
-              "Position initiale": [0,0.5],              #coordonnées du point de départ du rayon
-              "Angle initial": np.pi/15,              #angle avec l'horizontale, en rad
-              "Fonction dérivée": dérivée_3D,             #fonction utilisée pour le calcul de dérivée
-              "Calcul d'indice": n_amas,               #fonction utilisée pour le calcul de l'indice
-              "Pas de calcul du gradient": 1*al,
+parametres = {"Pas d'intégration": 1,             #en km
+              "Longueur du trajet": 30,               #abscisse curviligne, en km
+              "Position initiale": [0,0],              #coordonnées du point de départ du rayon
+              "Angle initial": np.pi/5,              #angle avec l'horizontale, en rad
+              "Fonction dérivée": dérivée,             #fonction utilisée pour le calcul de dérivée
+              "Calcul d'indice": n_interface,               #fonction utilisée pour le calcul de l'indice
+              "Pas de calcul du gradient": 0.01,
               "Indice 1 gradient": 2,
               "Indice 2 gradient": 1,
               "Hauteur du gradient": 100,
               "Indice 1 interface": 1,
-              "Indice 2 interface": 2,
-              "Position dioptre": 150,
+              "Indice 2 interface": 1.33,
+              "Position dioptre": 5,
               "Indice en dehors du prisme": 1.5,
               "Lambda": 634,
               "Nombre lambda": 20,          #nm
@@ -48,50 +48,50 @@ paramètres = {"Pas d'intégration": 2e6*al,             #en km
               "R": 5e6*al,
               "Position centre galaxie": [0, 0, -1e9*al],   #toujours fixé --> position initiale
               "Position centre amas": [0, 0, -1e9*al/2],    #peut être modifié mais dois toujours être le centre de la galaxie et l'observateur 
-              "Angle initial en 3D": (0,-np.pi/1200000000)}          #(theta,beta)    
+              "Angle initial en 3D": (0,-np.pi/10000)}          #(theta,beta)    
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-test_grav = {"Pas d'intégration": 2e19,             #en km
-              "Longueur du trajet": 2e22,
+test_grav = {"Pas d'intégration": 3e19,             #en km
+              "Longueur du trajet": 3e22,
               "Fonction dérivée": dérivée_3D,             #fonction utilisée pour le calcul de dérivée
               "Calcul d'indice": n_amas,
               "Vitesse lumière": 3e8,   #m/s
               "Constante G": 6.67e-11,  #m^3.kg^-1.s^-2    
-              "Masse amas": 4e7*m_S,   #kg 
+              "Masse amas": 4e15*m_S,   #kg 
               "Concentration": 15,      #plus il est grand, plus la masse est concentrée au centre
-              "R": 22e9,
+              "R": 22e9,                #Rayon de Sagittarius A*
               "Position centre galaxie": [0, 0, -1e22],   #toujours fixé --> position initiale
               "Position centre amas": [0, 0, -1e22/2],    #peut être modifié mais dois toujours être le centre de la galaxie et l'observateur 
-              "Angle initial en 3D": (0,np.pi/3000)}     #(theta,beta)    
+              "Angle initial en 3D": (0,-np.pi/5000)}     #(theta,beta)    
 
 
 
-s,v = RK4_3D(test_grav)
+"""s,v = RK4_3D(test_grav)
 
-print(v[:,0])
+print(v[:500,0, 2])
 
-v = v[v[:,0,2] <0]
+#v = v[v[:,0,2] <= 1e21]
 
 
 fig = plt.figure()
 ax = plt.axes(projection='3d')
 
-ax.plot3D(v[:,0,0], v[:,0,1], v[:,0,2], 'gray')
+ax.scatter3D(v[:,0,0], v[:,0,1], v[:,0,2], 'gray')
 
-xdata, ydata, zdata = paramètres["Position centre galaxie"]
+xdata, ydata, zdata = test_grav["Position centre galaxie"]
 ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='summer')
 
-x,y,z = paramètres["Position centre amas"]
+x,y,z = test_grav["Position centre amas"]
 ax.scatter3D(x, y, z, c=z, cmap='gnuplot')
 
 ax.scatter3D(0,0,0)
 
-"""# draw sphere
-a,b = np.mgrid[0:2*np.pi:20j, 0:np.pi:10j]
-h = ds*1000*np.cos(a)*np.sin(b)
-i = ds*1000*np.sin(a)*np.sin(b)
-j = ds*1000*np.cos(b)
-ax.plot_wireframe(h,i,j)"""
+# draw sphere
+#a,b = np.mgrid[0:2*np.pi:20j, 0:np.pi:10j]
+#h = ds*1000*np.cos(a)*np.sin(b)
+#i = ds*1000*np.sin(a)*np.sin(b)
+#j = ds*1000*np.cos(b)
+#ax.plot_wireframe(h,i,j)
 
 ax.set_xlabel('X axis')
 ax.set_ylabel('Y axis')
@@ -100,37 +100,39 @@ ax.set_zlabel('Z axis')
 #ax.view_init(0, 90)
 
 
-ax.set_xlim(-3e21, 3e21)
-ax.set_ylim(-3e21, 3e21)
-ax.set_zlim(-1e25, 1e21)
+ax.set_xlim(-3e19, 3e19)
+ax.set_ylim(-3e19, 3e19)
+ax.set_zlim(-1e22, 1e21)
 
-print(v.shape)
+for i in range(len(v)-1):
+    
+    deplacement = v[i+1,0] - v[i,0]
+    
+    print(i, np.linalg.norm(deplacement))
 
-print(s)
-print(max(v[:,0,0]))
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#On 
+#print(v.shape)
 
-
+#print(min(v[:,0,0]))
+"""
 
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  DICTIONNAIRES OPTIMISÉS SELON LES MODÈLES  ~~~~~~~~~~~~~~~~~~~~~~
 
-opti_interface = {"Pas d'intégration": 0.01,          #en m     
+opti_interface = {"Pas d'intégration": 0.01,          #en m      0.01
               "Longueur du trajet": 30,               #abscisse curviligne, en m
               "Position initiale": [0,0],             
               "Angle initial": np.pi/5,               
               "Fonction dérivée": dérivée,             
               "Calcul d'indice": n_interface,               
-              "Pas de calcul du gradient": 0.01,
+              "Pas de calcul du gradient": 0.005,
               "Indice 1 interface": 1,
               "Indice 2 interface": 1.33,
               "Position dioptre": 5}  
 
 #propagation_interface(opti_interface)  
 
-opti_gradient = {"Pas d'intégration": 1,               #en m
+opti_gradient = {"Pas d'intégration": 0.1,               #en m
               "Longueur du trajet": 120,               #abscisse curviligne, en m
               "Position initiale": [0,0],              
               "Angle initial": np.pi/8,                
@@ -174,3 +176,12 @@ opti_faisceau = {"Pas d'intégration": 0.01,
 #faisceau_prisme(opti_faisceau)
 
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+v = propagation_interface(opti_interface)
+
+for i in range(len(v)-1):
+    
+    deplacement = v[i+1,0] - v[i,0]
+    
+    print(i, np.linalg.norm(deplacement))

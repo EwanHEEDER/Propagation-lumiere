@@ -37,7 +37,7 @@ def RK4(dictionnaire):
     tot_trajec = dictionnaire["Longueur du trajet"]
     step = dictionnaire["Pas d'intégration"]
     v_ini = np.array([dictionnaire["Position initiale"],
-                      [np.cos(dictionnaire["Angle initial "]),np.sin(dictionnaire["Angle initial"])]])
+                      [np.cos(dictionnaire["Angle initial"]),np.sin(dictionnaire["Angle initial"])]])
     derive = dictionnaire["Fonction dérivée"]
     
     
@@ -78,13 +78,18 @@ def RK4(dictionnaire):
         
         d1 = derive(v[i-2],v[i-1], s[i-1], dictionnaire)
         
-        d2 = derive(v[i-2]+ d1 * step/2 , v[i-1] + d1 * step/2, s[i-1] + step/2, dictionnaire)
         
-        d3 = derive(v[i-2]+ d2 * step/2 , v[i-1] + d2 * step/2, s[i-1] + step/2, dictionnaire)
         
-        d4 = derive(v[i-2] + d3 * step , v[i-1] + d3 * step, s[i-1] + step, dictionnaire)
+#        d2 = derive(v[i-2]+ d1 * step/2 , v[i-1] + d1 * step/2, s[i-1] + step/2, dictionnaire)
         
-        v[i] = v[i-1] + (d1 + 2 * d2 + 2 * d3 + d4) * step / 6
+#        d3 = derive(v[i-2]+ d2 * step/2 , v[i-1] + d2 * step/2, s[i-1] + step/2, dictionnaire)
+        
+#        d4 = derive(v[i-2] + d3 * step , v[i-1] + d3 * step, s[i-1] + step, dictionnaire)
+        
+#        v[i] = v[i-1] + (d1 + 2 * d2 + 2 * d3 + d4) * step / 6
+        
+        v[i] = v[i-1] + d1  * step 
+
         
         print("Point ", i , " sur ", num_points+1)
         
