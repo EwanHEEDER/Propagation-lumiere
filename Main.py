@@ -66,17 +66,17 @@ test_grav = {"Pas d'intégration": 3e19,             #en km
 
 
 
-"""s,v = RK4_3D(test_grav)
+s,v = RK4_3D(test_grav)
 
 print(v[:500,0, 2])
 
-#v = v[v[:,0,2] <= 1e21]
+v = v[v[:,0,2] <= 0]
 
 
 fig = plt.figure()
 ax = plt.axes(projection='3d')
 
-ax.scatter3D(v[:,0,0], v[:,0,1], v[:,0,2], 'gray')
+ax.plot3D(v[:,0,0], v[:,0,1], v[:,0,2], 'gray')
 
 xdata, ydata, zdata = test_grav["Position centre galaxie"]
 ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='summer')
@@ -104,16 +104,10 @@ ax.set_xlim(-3e19, 3e19)
 ax.set_ylim(-3e19, 3e19)
 ax.set_zlim(-1e22, 1e21)
 
-for i in range(len(v)-1):
-    
-    deplacement = v[i+1,0] - v[i,0]
-    
-    print(i, np.linalg.norm(deplacement))
-
 #print(v.shape)
 
 #print(min(v[:,0,0]))
-"""
+
 
 
 
@@ -177,11 +171,3 @@ opti_faisceau = {"Pas d'intégration": 0.01,
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-v = propagation_interface(opti_interface)
-
-for i in range(len(v)-1):
-    
-    deplacement = v[i+1,0] - v[i,0]
-    
-    print(i, np.linalg.norm(deplacement))

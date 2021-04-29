@@ -19,7 +19,7 @@ def dérivée(u_prec, u, s, dictionnaire):
     
     dn = n(u[0], dictionnaire) - n(u_prec[0], dictionnaire)
     
-    dn_x = n(u[0], dictionnaire) - n(u[0] - dl * np.array([1,0]), dictionnaire) #Problème
+    dn_x = n(u[0], dictionnaire) - n(u[0] - dl * np.array([1,0]), dictionnaire) 
     
     dn_y = n(u[0], dictionnaire) - n(u[0] - dl * np.array([0,1]), dictionnaire)
         
@@ -28,7 +28,12 @@ def dérivée(u_prec, u, s, dictionnaire):
     #print("grad_n =", grad_n)
     
     du[0] = u[1]
+    
+    du[0] /= np.linalg.norm(du[0])
+    
     du[1] = grad_n - dn/ds * u[1]
+    
+    
     
     return du # une liste , (dr/ds, d^2(r) / ds^2)
 
@@ -80,15 +85,14 @@ def RK4(dictionnaire):
         
         
         
-#        d2 = derive(v[i-2]+ d1 * step/2 , v[i-1] + d1 * step/2, s[i-1] + step/2, dictionnaire)
+        d2 = derive(v[i-2]+ d1 * step/2 , v[i-1] + d1 * step/2, s[i-1] + step/2, dictionnaire)
         
-#        d3 = derive(v[i-2]+ d2 * step/2 , v[i-1] + d2 * step/2, s[i-1] + step/2, dictionnaire)
+        d3 = derive(v[i-2]+ d2 * step/2 , v[i-1] + d2 * step/2, s[i-1] + step/2, dictionnaire)
         
-#        d4 = derive(v[i-2] + d3 * step , v[i-1] + d3 * step, s[i-1] + step, dictionnaire)
+        d4 = derive(v[i-2] + d3 * step , v[i-1] + d3 * step, s[i-1] + step, dictionnaire)
         
-#        v[i] = v[i-1] + (d1 + 2 * d2 + 2 * d3 + d4) * step / 6
+        v[i] = v[i-1] + (d1 + 2 * d2 + 2 * d3 + d4) * step / 6
         
-        v[i] = v[i-1] + d1  * step 
 
         
         print("Point ", i , " sur ", num_points+1)
@@ -143,6 +147,9 @@ def dérivée_3D(u_prec, u, s, dictionnaire):
     #print("grad_n =", grad_n)
     
     du[0] = u[1]
+    
+    du[0] /= np.linalg.norm(du[0])
+    
     du[1] = grad_n - dn/ds * u[1]
     
     return du # une liste , (dr/ds, d^2(r) / ds^2)
