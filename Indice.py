@@ -88,8 +88,8 @@ def n_amas(position, dictionnaire):
     c = dictionnaire["Vitesse lumière"]
     R = dictionnaire["R"]
     centre = dictionnaire["Position centre amas"]
-    r = np.sqrt((position[0]-centre[0])**2 + (position[1]-centre[1])**2 + (position[2]-centre[2])**2)
-    
+#    r = np.sqrt((position[0]-centre[0])**2 + (position[1]-centre[1])**2 + (position[2]-centre[2])**2)
+    r = np.linalg.norm(position - centre)
     if r<=R:
         phi = phi_inf(r, dictionnaire)
     else : 

@@ -8,8 +8,9 @@ Created on Tue Apr 20 13:54:53 2021
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.cm as cmx
+import tqdm
 
-from Resolution_equation_mouvement import dérivée, RK4
+from Resolution_equation_mouvement import dérivée, RK4, dérivée_3D, RK4_3D
 from Indice import n_grad, n_interface, n_prisme
 from Prisme import prisme
 
@@ -172,7 +173,7 @@ def faisceau_prisme(dictionnaire):
     ax.set_aspect('equal')
     ax.set_facecolor('black')
     
-    for i in range(wavelength.size):
+    for i in tqdm.tqdm(range(wavelength.size)):
         
         dictionnaire["Lambda"] = wavelength[i]
     
@@ -187,7 +188,7 @@ def faisceau_prisme(dictionnaire):
 
         plt.plot(x,y,'.', markersize = 2.5, color = colors[i])
     
-        print("i = ", i , "sur ", wavelength.size - 1)
+ #       print("i = ", i , "sur ", wavelength.size - 1) --> tqdm plus pratique
         
     plt.xlabel("X (m)")
     plt.ylabel("Y (m)")
@@ -198,6 +199,47 @@ def faisceau_prisme(dictionnaire):
     plt.xlim(0,15)
     plt.ylim(0,15)
 
-def test(x):
+def propagation_grav(dictionnaire):
     
-    print(x)
+    s,v, indices = RK4_3D(dictionnaire)
+
+    masque_v = v[:,0,2] < 0
+    masque_indice = indices < 1000
+    
+    
+    indices = indices[masque_v & masque_indice]
+    v = v[masque_v & masque_indice]
+    
+    plt.figure(figsize = (5,5))
+    ax = plt.axes(projection='3d')
+    
+    ax.plot3D(v[:,0,0], v[:,0,1], v[:,0,2], 'gray')
+    
+    xdata, ydata, zdata = dictionnaire["Position centre galaxie"]
+    ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='summer')
+    
+    x,y,z = dictionnaire["Position centre amas"]
+    
+    
+    ax.scatter3D(x, y, z, c=z, cmap='gnuplot')
+    
+    ax.scatter3D(0,0,0, s = 80)
+    
+    
+    
+    ax.set_xlabel('X axis')
+    ax.set_ylabel('Y axis')
+    ax.set_zlabel('Z axis')
+    
+    
+    
+    ax.set_xlim(-1e17, 1e17)
+    ax.set_ylim(-1e17, 1e17)
+    ax.set_zlim(-1e22, 1e21)
+    
+    
+    
+    plt.figure()
+    
+    plt.scatter(np.linalg.norm(v[:,0] - [0, 0, -1e22/2], axis = 1), indices)
+    

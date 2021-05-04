@@ -1,5 +1,7 @@
 import numpy as np
 
+import tqdm
+
 
 def dérivée(u_prec, u, s, dictionnaire):
     
@@ -68,18 +70,6 @@ def RK4(dictionnaire):
     # boucle for
     
     for i in range(2,num_points):
-        """print("i = ", i)
-        
-        print("x[i-2] = ", v[i-2,0,0])
-        
-        print("x[i-1] = ", v[i-1,0,0])
-        
-        print("dx = ",v[i-1,0,0] - v[i-2, 0, 0])
-        """
-        
-        
-        
-        #On change la fonction utilisée pour le calcul de dérivée
         
         d1 = derive(v[i-2],v[i-1], s[i-1], dictionnaire)
         
@@ -95,7 +85,7 @@ def RK4(dictionnaire):
         
 
         
-        print("Point ", i , " sur ", num_points+1)
+#        print("Point ", i , " sur ", num_points+1)
         
         
    
@@ -111,13 +101,20 @@ def dérivée_3D(u_prec, u, s, dictionnaire):
     
     n = dictionnaire["Calcul d'indice"]
     ds = dictionnaire["Pas d'intégration"]
+    dl = dictionnaire["Pas de calcul du gradient"]
     
     G = dictionnaire["Constante G"]
     M = dictionnaire["Masse amas"]
     c = dictionnaire["Vitesse lumière"]
     centre = dictionnaire["Position centre amas"]
+    C = dictionnaire["Concentration"]
+    R = dictionnaire["R"]
+    g  = 1/(np.log(1+C)-C/(1+C))
     
-    r = np.sqrt((u[0,0]-centre[0])**2 + (u[0,1]-centre[1])**2 + (u[0,2]-centre[2])**2)
+    
+    r = np.linalg.norm(u[0] - centre)
+    
+    alpha = r/R
     
     """ u_prec : coordonnées au pas précédent
         u : coordonnées au pas actuel
@@ -130,21 +127,24 @@ def dérivée_3D(u_prec, u, s, dictionnaire):
     
     dn = n(u[0], dictionnaire) - n(u_prec[0], dictionnaire)
     
-#    dn_x = n(u[0], dictionnaire) - n(u[0] - dl * np.array([1,0,0]), dictionnaire) #Problème
-    
-#    dn_y = n(u[0], dictionnaire) - n(u[0] - dl * np.array([0,1,0]), dictionnaire)
-    
-#    dn_z = n(u[0], dictionnaire) - n(u[0] - dl * np.array([0,0,1]), dictionnaire)
+    if r<=R:
+        
+        dn_x = -2*G*M/c**2*u[0,0]/r**3*g * (-2*C*alpha/(1+C*alpha)+np.log(1+C*alpha) + C*alpha/(1+C*alpha)**2)
+        
+        dn_y = -2*G*M/c**2*u[0,1]/r**3*g * (-2*C*alpha/(1+C*alpha)+np.log(1+C*alpha) + C*alpha/(1+C*alpha)**2)
 
-    dn_x = - (2*G*M/c**2) * u[0,0]/r**3
-    
-    dn_y = - (2*G*M/c**2) * u[0,1]/r**3
-    
-    dn_z = - (2*G*M/c**2) * u[0,2]/r**3
+        dn_z = -2*G*M/c**2*u[0,2]/r**3*g * (-2*C*alpha/(1+C*alpha)+np.log(1+C*alpha) + C*alpha/(1+C*alpha)**2)
+
+    else:
+
+        dn_x = - (2*G*M/c**2) * u[0,0]/r**3
+        
+        dn_y = - (2*G*M/c**2) * u[0,1]/r**3
+        
+        dn_z = - (2*G*M/c**2) * u[0,2]/r**3
         
     grad_n = dn_x * np.array([1,0,0]) + dn_y * np.array([0,1,0]) + dn_z * np.array([0,0,1])
     
-    #print("grad_n =", grad_n)
     
     du[0] = u[1]
     
@@ -179,6 +179,8 @@ def RK4_3D(dictionnaire):
     # initialisation du tableau v, à 3 dimensions: Pour chaque pas --> deux vecteurs de dimension 2
     v = np.empty((num_points,2,3))
     
+    indices = np.ones(num_points)
+    
 
 
     # condition initiale
@@ -187,7 +189,7 @@ def RK4_3D(dictionnaire):
 
     # boucle for
     
-    for i in range(2,num_points):
+    for i in tqdm.tqdm(range(2,num_points)):
         """print("i = ", i)
         
         print("x[i-2] = ", v[i-2,0,0])
@@ -211,10 +213,12 @@ def RK4_3D(dictionnaire):
         
         v[i] = v[i-1] + (d1 + 2 * d2 + 2 * d3 + d4) * step / 6
         
-        print("Point ", i , " sur ", num_points+1)
+        indices[i] = dictionnaire["Calcul d'indice"](v[i,0], dictionnaire)
+        
+#        print("Point ", i , " sur ", num_points+1)   --> tqdm beaucoup plus pratique
         
         
     print("Pas = ", dictionnaire["Pas d'intégration"])
    
     # argument de sortie
-    return s , v
+    return s , v, indices

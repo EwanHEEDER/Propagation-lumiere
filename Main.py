@@ -16,7 +16,7 @@ from mpl_toolkits.mplot3d import axes3d
 from Indice import n_grad, n_interface, n_prisme, n_amas
 from Resolution_equation_mouvement import dérivée, RK4, dérivée_3D, RK4_3D
 from Prisme import prisme
-from Modeles import propagation_grad, propagation_interface, propagation_prisme, faisceau_prisme
+from Modeles import propagation_grad, propagation_interface, propagation_prisme, faisceau_prisme, propagation_grav
 
 
 #Conversion en unité SI:
@@ -51,62 +51,7 @@ parametres = {"Pas d'intégration": 1,             #en km
               "Angle initial en 3D": (0,-np.pi/10000)}          #(theta,beta)    
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-test_grav = {"Pas d'intégration": 3e19,             #en km
-              "Longueur du trajet": 3e22,
-              "Fonction dérivée": dérivée_3D,             #fonction utilisée pour le calcul de dérivée
-              "Calcul d'indice": n_amas,
-              "Vitesse lumière": 3e8,   #m/s
-              "Constante G": 6.67e-11,  #m^3.kg^-1.s^-2    
-              "Masse amas": 4e15*m_S,   #kg 
-              "Concentration": 15,      #plus il est grand, plus la masse est concentrée au centre
-              "R": 22e9,                #Rayon de Sagittarius A*
-              "Position centre galaxie": [0, 0, -1e22],   #toujours fixé --> position initiale
-              "Position centre amas": [0, 0, -1e22/2],    #peut être modifié mais dois toujours être le centre de la galaxie et l'observateur 
-              "Angle initial en 3D": (0,-np.pi/5000)}     #(theta,beta)    
 
-
-
-s,v = RK4_3D(test_grav)
-
-print(v[:500,0, 2])
-
-v = v[v[:,0,2] <= 0]
-
-
-fig = plt.figure()
-ax = plt.axes(projection='3d')
-
-ax.plot3D(v[:,0,0], v[:,0,1], v[:,0,2], 'gray')
-
-xdata, ydata, zdata = test_grav["Position centre galaxie"]
-ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='summer')
-
-x,y,z = test_grav["Position centre amas"]
-ax.scatter3D(x, y, z, c=z, cmap='gnuplot')
-
-ax.scatter3D(0,0,0)
-
-# draw sphere
-#a,b = np.mgrid[0:2*np.pi:20j, 0:np.pi:10j]
-#h = ds*1000*np.cos(a)*np.sin(b)
-#i = ds*1000*np.sin(a)*np.sin(b)
-#j = ds*1000*np.cos(b)
-#ax.plot_wireframe(h,i,j)
-
-ax.set_xlabel('X axis')
-ax.set_ylabel('Y axis')
-ax.set_zlabel('Z axis')
-
-#ax.view_init(0, 90)
-
-
-ax.set_xlim(-3e19, 3e19)
-ax.set_ylim(-3e19, 3e19)
-ax.set_zlim(-1e22, 1e21)
-
-#print(v.shape)
-
-#print(min(v[:,0,0]))
 
 
 
@@ -137,7 +82,7 @@ opti_gradient = {"Pas d'intégration": 0.1,               #en m
               "Indice 2 gradient": 1,
               "Hauteur du gradient": 100}
 
-#propagation_grad(opti_gradient)       
+propagation_grad(opti_gradient)       
   
 
 opti_prisme = {"Pas d'intégration": 0.01,               #en m
@@ -169,5 +114,23 @@ opti_faisceau = {"Pas d'intégration": 0.01,
 
 #faisceau_prisme(opti_faisceau)
 
+opti_grav = {"Pas d'intégration": 3e19,             #en km
+              "Longueur du trajet": 3e22,
+              "Pas de calcul du gradient": 1,
+              "Fonction dérivée": dérivée_3D,             #fonction utilisée pour le calcul de dérivée
+              "Calcul d'indice": n_amas,
+              "Vitesse lumière": 3e8,   #m/s
+              "Constante G": 6.67e-11,  #m^3.kg^-1.s^-2    
+              "Masse amas": 4e16*m_S,   #kg 
+              "Concentration": 10,      #plus il est grand, plus la masse est concentrée au centre
+              "R": 1e15,                #Rayon du trou noir
+              "Position centre galaxie": [0, 0, -1e22],   #toujours fixé --> position initiale
+              "Position centre amas": [0, 0, -1e22/2],    #peut être modifié mais dois toujours être le centre de la galaxie et l'observateur 
+              "Angle initial en 3D": (0,-np.pi/1000000)}     #(theta,beta)    
+
+#propagation_grav(opti_grav)
+
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#                               (☝︎ ՞ਊ ՞)☝︎
