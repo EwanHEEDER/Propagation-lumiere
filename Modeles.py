@@ -158,7 +158,7 @@ def faisceau_prisme(dictionnaire):
     f1, f2 = prisme(dictionnaire)
     contours = np.linspace(dictionnaire["Prisme"][0],dictionnaire["Prisme"][1])
     
-    fig = plt.figure(figsize = (10,10), dpi = 1200)
+    fig = plt.figure(figsize = (7,7))
     
     ax = fig.add_subplot(111)
     
@@ -167,6 +167,7 @@ def faisceau_prisme(dictionnaire):
     
     plt.plot(contours[eq1<=dictionnaire["Prisme"][2]], eq1[eq1<=dictionnaire["Prisme"][2]], 'white')
     plt.plot(contours[eq2<=dictionnaire["Prisme"][2]], eq2[eq2<=dictionnaire["Prisme"][2]], 'white')
+    plt.plot((dictionnaire["Prisme"][0]+dictionnaire["Prisme"][1])/2, dictionnaire["Prisme"][2], 'white')
     
     plt.hlines(0,dictionnaire["Prisme"][0], dictionnaire["Prisme"][1], color = 'white')
     
@@ -243,3 +244,48 @@ def propagation_grav(dictionnaire):
     
     plt.scatter(np.linalg.norm(v[:,0] - [0, 0, -1e22/2], axis = 1), indices)
     
+
+def multi_propagation_grav(dictionnaire):
+    
+    nombre_angles = dictionnaire["Nombre d'angles"]
+    angles = np.linspace(0,2*np.pi, nombre_angles)    #théta
+    ds = dictionnaire["Pas d'intégration"]
+    
+    plt.figure(1)
+        
+    ax = plt.axes(projection='3d')
+    
+    for i in tqdm.tqdm(range(nombre_angles)):
+        
+        dictionnaire["Angle initial en 3D"][0] = angles[i]
+        
+        s,v,indices = RK4_3D(dictionnaire)
+        
+        masque = v[:,0,2] <= ds/2 
+        
+        v = v[masque]
+        
+    
+        
+        ax.plot3D(v[:,0,0], v[:,0,1], v[:,0,2], 'gray')
+        
+        xdata, ydata, zdata = dictionnaire["Position centre galaxie"]
+        ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='summer')
+        
+        x,y,z = dictionnaire["Position centre amas"]
+        
+        
+        ax.scatter3D(x, y, z, c=z, cmap='gnuplot')
+        
+        ax.scatter3D(0,0,0, s = 80)
+        
+        ax.set_xlabel('X axis')
+        ax.set_ylabel('Y axis')
+        ax.set_zlabel('Z axis')
+        
+        
+        
+    ax.set_xlim(-5e16, 5e16)
+    ax.set_ylim(-5e16, 5e16)
+    ax.set_zlim(-1e22, 1e21)
+        

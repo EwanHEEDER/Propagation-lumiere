@@ -189,7 +189,7 @@ def RK4_3D(dictionnaire):
 
     # boucle for
     
-    for i in tqdm.tqdm(range(2,num_points)):
+    for i in range(2,num_points):
         """print("i = ", i)
         
         print("x[i-2] = ", v[i-2,0,0])
