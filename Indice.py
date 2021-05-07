@@ -68,12 +68,12 @@ def n_prisme(position, dictionnaire):       #Possible changer verre. Par défaut
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ LENTILLE GRAVITATIONNELLE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def phi_sup(r, dictionnaire):
-    return - dictionnaire["Constante G"]*dictionnaire["Masse amas"]/r
+    return - dictionnaire["Constante G"]*dictionnaire["Masse trou noir"]/r
 
 def phi_inf(r, dictionnaire):
     
     G = dictionnaire["Constante G"]
-    M = dictionnaire["Masse amas"]
+    M = dictionnaire["Masse trou noir"]
     C = dictionnaire["Concentration"]
     R = dictionnaire["R"]
     
@@ -87,7 +87,7 @@ def n_amas(position, dictionnaire):
     
     c = dictionnaire["Vitesse lumière"]
     R = dictionnaire["R"]
-    centre = dictionnaire["Position centre amas"]
+    centre = dictionnaire["Position trou noir"]
 #    r = np.sqrt((position[0]-centre[0])**2 + (position[1]-centre[1])**2 + (position[2]-centre[2])**2)
     r = np.linalg.norm(position - centre)
     if r<=R:

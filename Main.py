@@ -16,8 +16,8 @@ from mpl_toolkits.mplot3d import axes3d
 from Indice import n_grad, n_interface, n_prisme, n_amas
 from Resolution_equation_mouvement import dérivée, RK4, dérivée_3D, RK4_3D
 from Prisme import prisme
-from Modeles import propagation_grad, propagation_interface, propagation_prisme, faisceau_prisme, propagation_grav, multi_propagation_grav
-
+from Modeles import propagation_grad, propagation_interface, propagation_prisme
+from Modeles import faisceau_prisme, propagation_grav, multi_propagation_grav, lentille_grav
 
 #Conversion en unité SI:
 al = 9.461e15 #m
@@ -43,16 +43,15 @@ parametres = {"Pas d'intégration": 1,             #en km
               "Verre": (1.72, 29.3),    #propriétés du verre; tuple : (nD, Nombre d'Abbe)  
               "Vitesse lumière": 3e8,   #m/s
               "Constante G": 6.67e-11,  #m^3.kg^-1.s^-2    
-              "Masse amas": 1e15*m_S,   #kg 
+              "Masse trou noir": 1e15*m_S,   #kg 
               "Concentration": 10,      #plus il est grand, plus la masse est concentrée au centre
               "R": 5e6*al,
               "Position centre galaxie": [0, 0, -1e9*al],   #toujours fixé --> position initiale
-              "Position centre amas": [0, 0, -1e9*al/2],    #peut être modifié mais dois toujours être le centre de la galaxie et l'observateur 
+              "Position trou noir": [0, 0, -1e9*al/2],    #peut être modifié mais dois toujours être le centre de la galaxie et l'observateur 
               "Angle initial en 3D": (0,-np.pi/10000),      #(theta,beta) 
               "Nombre d'angles": 10}             
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 
 
@@ -115,6 +114,9 @@ opti_faisceau = {"Pas d'intégration": 0.01,
 
 #faisceau_prisme(opti_faisceau)
 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 opti_grav = {"Pas d'intégration": 3e19,             #en km
               "Longueur du trajet": 3e22,
               "Pas de calcul du gradient": 1,
@@ -122,17 +124,19 @@ opti_grav = {"Pas d'intégration": 3e19,             #en km
               "Calcul d'indice": n_amas,
               "Vitesse lumière": 3e8,   #m/s
               "Constante G": 6.67e-11,  #m^3.kg^-1.s^-2    
-              "Masse amas": 4e16*m_S,   #kg 
+              "Masse trou noir": 4e16*m_S,   #kg 
               "Concentration": 10,      #plus il est grand, plus la masse est concentrée au centre
               "R": 1e15,                #Rayon du trou noir
               "Position centre galaxie": [0, 0, -1e22],   #toujours fixé --> position initiale
-              "Position centre amas": [0, 0, -1e22/2],    #peut être modifié mais dois toujours être le centre de la galaxie et l'observateur 
+              "Position trou noir": [0, 0, -1e22/2],    #peut être modifié mais dois toujours être le centre de la galaxie et l'observateur 
               "Angle initial en 3D": [np.pi,-np.pi/1000000],
               "Nombre d'angles": 10}     #(theta,beta)    
 
 #propagation_grav(opti_grav)
 
-multi_propagation_grav(opti_grav)
+#multi_propagation_grav(opti_grav)
+
+lentille_grav()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

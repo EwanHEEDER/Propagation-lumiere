@@ -104,9 +104,9 @@ def dérivée_3D(u_prec, u, s, dictionnaire):
     dl = dictionnaire["Pas de calcul du gradient"]
     
     G = dictionnaire["Constante G"]
-    M = dictionnaire["Masse amas"]
+    M = dictionnaire["Masse trou noir"]
     c = dictionnaire["Vitesse lumière"]
-    centre = dictionnaire["Position centre amas"]
+    centre = dictionnaire["Position trou noir"]
     C = dictionnaire["Concentration"]
     R = dictionnaire["R"]
     g  = 1/(np.log(1+C)-C/(1+C))

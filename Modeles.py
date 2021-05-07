@@ -14,6 +14,7 @@ from Resolution_equation_mouvement import dérivée, RK4, dérivée_3D, RK4_3D
 from Indice import n_grad, n_interface, n_prisme
 from Prisme import prisme
 
+
 def propagation_grad(dictionnaire):
     
     #Sécurité
@@ -195,7 +196,8 @@ def faisceau_prisme(dictionnaire):
     plt.ylabel("Y (m)")
     plt.title("Dispersion d'un faisceau lumineux de " 
               + str(dictionnaire["Nombre lambda"]) + " longueurs d'ondes à travers un prisme"+
-              "\n"+ "(nD = " + str(dictionnaire["Verre"][0]) + ", VD = " + str(dictionnaire["Verre"][1]) +")")
+              "\n"+ "(nD = " + str(dictionnaire["Verre"][0]) + ", VD = " + 
+              str(dictionnaire["Verre"][1]) +")")
     
     plt.xlim(0,15)
     plt.ylim(0,15)
@@ -219,7 +221,7 @@ def propagation_grav(dictionnaire):
     xdata, ydata, zdata = dictionnaire["Position centre galaxie"]
     ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='summer')
     
-    x,y,z = dictionnaire["Position centre amas"]
+    x,y,z = dictionnaire["Position trou noir"]
     
     
     ax.scatter3D(x, y, z, c=z, cmap='gnuplot')
@@ -251,37 +253,36 @@ def multi_propagation_grav(dictionnaire):
     angles = np.linspace(0,2*np.pi, nombre_angles)    #théta
     ds = dictionnaire["Pas d'intégration"]
     
-    plt.figure(1)
-        
+    plt.figure()    
     ax = plt.axes(projection='3d')
     
     for i in tqdm.tqdm(range(nombre_angles)):
         
-        dictionnaire["Angle initial en 3D"][0] = angles[i]
+        dictionnaire["Angle initial en 3D"][0] = angles[i]      #On recalcule la trajectoire pour un 
+                                                                # nouvel angle thêta
         
-        s,v,indices = RK4_3D(dictionnaire)
-        
-        masque = v[:,0,2] <= ds/2 
-        
-        v = v[masque]
+        s,v,indices = RK4_3D(dictionnaire)                      
+        masque = v[:,0,2] <= ds/2                 #on ne garde que les portions de trajectoire
+                                                  #avant la Terre
+        v = v[masque]                            
         
     
         
         ax.plot3D(v[:,0,0], v[:,0,1], v[:,0,2], 'gray')
         
-        xdata, ydata, zdata = dictionnaire["Position centre galaxie"]
+        xdata, ydata, zdata = dictionnaire["Position centre galaxie"]    #Point de départ des rayons
         ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='summer')
         
-        x,y,z = dictionnaire["Position centre amas"]
+        x,y,z = dictionnaire["Position trou noir"]                      #Position du trou noir
         
         
         ax.scatter3D(x, y, z, c=z, cmap='gnuplot')
         
-        ax.scatter3D(0,0,0, s = 80)
+        ax.scatter3D(0,0,0, s = 80)                                     #Position de la Terre
         
-        ax.set_xlabel('X axis')
-        ax.set_ylabel('Y axis')
-        ax.set_zlabel('Z axis')
+        ax.set_xlabel('X axis (m)')
+        ax.set_ylabel('Y axis (m)')
+        ax.set_zlabel('Z axis (m)')
         
         
         
@@ -289,3 +290,21 @@ def multi_propagation_grav(dictionnaire):
     ax.set_ylim(-5e16, 5e16)
     ax.set_zlim(-1e22, 1e21)
         
+def lentille_grav():
+    
+    m_S = 1.988e30 #kg
+    
+    lentille = np.genfromtxt('lentille.csv', delimiter = ',')
+
+    fig=plt.figure(figsize = (10,10))
+    ax = fig.add_subplot(111)
+    ax.set_aspect('equal')
+    ax.set_facecolor('black')
+    
+    plt.plot(lentille[:,0], lentille[:,1], 'white')
+    
+    plt.xlabel('X axis (m)')
+    plt.ylabel('Y axis (m)')
+    plt.title("Effet de lentille gravitationnelle provoqué par un trou noir de masse m = " + 
+              str("{:.2e}".format(4e16*m_S))+ " kg " + "\n"+ " et de rayon R = " + 
+              str("{:.2e}".format(1e15)))
