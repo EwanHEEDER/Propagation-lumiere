@@ -83,7 +83,7 @@ def phi_inf(r, dictionnaire):
     
     return -(G*M)/r*g*(np.log(1+C*alpha)-C*alpha/(1+C*alpha))
         
-def n_amas(position, dictionnaire):
+def n_grav(position, dictionnaire):
     
     c = dictionnaire["Vitesse lumière"]
     R = dictionnaire["R"]

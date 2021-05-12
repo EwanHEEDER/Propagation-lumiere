@@ -13,7 +13,7 @@ from mpl_toolkits import mplot3d
 from mpl_toolkits.mplot3d import axes3d
 
 
-from Indice import n_grad, n_interface, n_prisme, n_amas
+from Indice import n_grad, n_interface, n_prisme, n_grav
 from Resolution_equation_mouvement import dérivée, RK4, dérivée_3D, RK4_3D
 from Prisme import prisme
 from Modeles import propagation_grad, propagation_interface, propagation_prisme
@@ -61,7 +61,7 @@ parametres = {"Pas d'intégration": 1,             #en km
 opti_interface = {"Pas d'intégration": 0.01,          #en m      0.01
               "Longueur du trajet": 30,               #abscisse curviligne, en m
               "Position initiale": [0,0],             
-              "Angle initial": np.pi/5,               
+              "Angle initial": np.pi/4,               
               "Fonction dérivée": dérivée,             
               "Calcul d'indice": n_interface,               
               "Pas de calcul du gradient": 0.005,
@@ -72,9 +72,9 @@ opti_interface = {"Pas d'intégration": 0.01,          #en m      0.01
 #propagation_interface(opti_interface)  
 
 opti_gradient = {"Pas d'intégration": 0.1,               #en m
-              "Longueur du trajet": 120,               #abscisse curviligne, en m
+              "Longueur du trajet": 150,               #abscisse curviligne, en m
               "Position initiale": [0,0],              
-              "Angle initial": np.pi/8,                
+              "Angle initial": np.pi/8,                #np.pi/8
               "Fonction dérivée": dérivée,             
               "Calcul d'indice": n_grad,               
               "Pas de calcul du gradient": 0.1,
@@ -121,7 +121,7 @@ opti_grav = {"Pas d'intégration": 3e19,             #en km
               "Longueur du trajet": 3e22,
               "Pas de calcul du gradient": 1,
               "Fonction dérivée": dérivée_3D,             #fonction utilisée pour le calcul de dérivée
-              "Calcul d'indice": n_amas,
+              "Calcul d'indice": n_grav,
               "Vitesse lumière": 3e8,   #m/s
               "Constante G": 6.67e-11,  #m^3.kg^-1.s^-2    
               "Masse trou noir": 4e16*m_S,   #kg 
@@ -129,14 +129,14 @@ opti_grav = {"Pas d'intégration": 3e19,             #en km
               "R": 1e15,                #Rayon du trou noir
               "Position centre galaxie": [0, 0, -1e22],   #toujours fixé --> position initiale
               "Position trou noir": [0, 0, -1e22/2],    #peut être modifié mais dois toujours être le centre de la galaxie et l'observateur 
-              "Angle initial en 3D": [np.pi,-np.pi/1000000],
-              "Nombre d'angles": 10}     #(theta,beta)    
+              "Angle initial en 3D": [np.pi,-np.pi/1000000], #(theta,beta)   
+              "Nombre d'angles" = 10}      
 
 #propagation_grav(opti_grav)
 
 #multi_propagation_grav(opti_grav)
 
-lentille_grav()
+#lentille_grav()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

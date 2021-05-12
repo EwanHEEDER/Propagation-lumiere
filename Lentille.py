@@ -20,7 +20,7 @@ from numpy import asarray
 from numpy import savetxt
 
 
-from Indice import n_amas
+from Indice import n_grav
 from Resolution_equation_mouvement import dérivée_3D, RK4_3D
 from Modeles import propagation_grav
 from Main import opti_grav

@@ -33,7 +33,7 @@ def dérivée(u_prec, u, s, dictionnaire):
     
     du[0] /= np.linalg.norm(du[0])
     
-    du[1] = grad_n - dn/ds * u[1]
+    du[1] = (grad_n - dn/ds * u[1]) / n(u[0], dictionnaire)
     
     
     
@@ -150,7 +150,7 @@ def dérivée_3D(u_prec, u, s, dictionnaire):
     
     du[0] /= np.linalg.norm(du[0])
     
-    du[1] = grad_n - dn/ds * u[1]
+    du[1] = (grad_n - dn/ds * u[1]) / n(u[0], dictionnaire)
     
     return du # une liste , (dr/ds, d^2(r) / ds^2)
 

@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.cm as cmx
 import tqdm
+from scipy.optimize import curve_fit
 
 from Resolution_equation_mouvement import dérivée, RK4, dérivée_3D, RK4_3D
 from Indice import n_grad, n_interface, n_prisme
@@ -92,8 +93,8 @@ def propagation_interface(dictionnaire):
     
     plt.axvline(dioptre, color = 'black')
     
-    plt.xlabel("X (en m)")
-    plt.ylabel("Y (en m)")
+    plt.xlabel("X (en cm)")
+    plt.ylabel("Y (en cm)")
     plt.title("Trajet d'un rayon lumineux à l'interface entre un milieu d'indice n1 = " + str(n1) + "\n"+ 
               "et un milieu d'indice n2 = " +str(n2) + "\n" + "avec un angle initiale de "+
                str("%.3f"%dictionnaire["Angle initial"]) + " rad")
@@ -116,7 +117,7 @@ def propagation_prisme(dictionnaire):
     f1, f2 = prisme(dictionnaire)
     contours = np.linspace(dictionnaire["Prisme"][0],dictionnaire["Prisme"][1])
     
-    fig=plt.figure(figsize = (10,10), dpi = 1200)
+    fig=plt.figure(figsize = (10,10))
     
     ax = fig.add_subplot(111)
     ax.set_aspect('equal')
@@ -143,8 +144,8 @@ def propagation_prisme(dictionnaire):
     plt.title("Trajectoire d'un rayon lumineux à travers un prisme" + "\n"+
               "(nD = " + str(dictionnaire["Verre"][0]) + ", VD = " + str(dictionnaire["Verre"][1]) +")" )
     
-    plt.xlabel("X (en m)")
-    plt.ylabel("Y (en m)")
+    plt.xlabel("X (en cm)")
+    plt.ylabel("Y (en cm)")
     
 
 def faisceau_prisme(dictionnaire):
@@ -192,8 +193,8 @@ def faisceau_prisme(dictionnaire):
     
  #       print("i = ", i , "sur ", wavelength.size - 1) --> tqdm plus pratique
         
-    plt.xlabel("X (m)")
-    plt.ylabel("Y (m)")
+    plt.xlabel("X (cm)")
+    plt.ylabel("Y (cm)")
     plt.title("Dispersion d'un faisceau lumineux de " 
               + str(dictionnaire["Nombre lambda"]) + " longueurs d'ondes à travers un prisme"+
               "\n"+ "(nD = " + str(dictionnaire["Verre"][0]) + ", VD = " + 
@@ -204,7 +205,11 @@ def faisceau_prisme(dictionnaire):
 
 def propagation_grav(dictionnaire):
     
+    #Calcul de la trajectoire
+    
     s,v, indices = RK4_3D(dictionnaire)
+    
+    #Retrait des rayons qui dépassent la Terre et des indices optiques aberrant
 
     masque_v = v[:,0,2] < 0
     masque_indice = indices < 1000
@@ -213,26 +218,34 @@ def propagation_grav(dictionnaire):
     indices = indices[masque_v & masque_indice]
     v = v[masque_v & masque_indice]
     
+    #Plot de la trajectoire en 3D
+    
     plt.figure(figsize = (5,5))
     ax = plt.axes(projection='3d')
     
     ax.plot3D(v[:,0,0], v[:,0,1], v[:,0,2], 'gray')
     
+    #Ajout de ka Terre, du trou noir et de la galaxie d'origine
+    
     xdata, ydata, zdata = dictionnaire["Position centre galaxie"]
-    ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='summer')
+    ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='summer', label = 'Galaxie')
     
     x,y,z = dictionnaire["Position trou noir"]
     
     
-    ax.scatter3D(x, y, z, c=z, cmap='gnuplot')
+    ax.scatter3D(x, y, z, c=z, cmap='gnuplot', label = 'Trou noir')
     
-    ax.scatter3D(0,0,0, s = 80)
+    ax.scatter3D(0,0,0, label = "Terre")
     
     
     
-    ax.set_xlabel('X axis')
-    ax.set_ylabel('Y axis')
-    ax.set_zlabel('Z axis')
+    ax.set_xlabel('X axis (m)')
+    ax.set_ylabel('Y axis (m)')
+    ax.set_zlabel('Z axis (m)')
+    
+    plt.title("Trajet d'un rayon lumineux depuis une galaxie située à " + 
+              str("{:.1e}".format(np.linalg.norm([xdata, ydata, zdata]))) + " m de la Terre")
+    plt.legend()
     
     
     
@@ -240,11 +253,24 @@ def propagation_grav(dictionnaire):
     ax.set_ylim(-1e17, 1e17)
     ax.set_zlim(-1e22, 1e21)
     
-    
+      
+    # Plot de n(r)
     
     plt.figure()
     
     plt.scatter(np.linalg.norm(v[:,0] - [0, 0, -1e22/2], axis = 1), indices)
+    
+    plt.xlabel("r (m)")
+    plt.ylabel("n")
+    
+    plt.title("Évolution de l'indice optique en fonction de la distance au centre du trou noir")
+    
+    
+    
+    
+             
+                           
+            
     
 
 def multi_propagation_grav(dictionnaire):
