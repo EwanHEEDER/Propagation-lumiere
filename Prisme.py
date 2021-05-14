@@ -1,6 +1,3 @@
-import numpy as np
-
-import matplotlib.pyplot as plt
 
 def prisme(dictionnaire):
     
@@ -12,35 +9,20 @@ def prisme(dictionnaire):
     
     a1 = (2 * y3)/(x2 - x1)
     
-    b1 =-2 * x1 * y3/(x2 - x1) #par tan
+    b1 =-2 * x1 * y3/(x2 - x1) #par définition de la tangente
     
     a2 = (2 * y3)/(x1 - x2)
     
-    b2 = 2 * y3 * x2/(x2 - x1)  #Thalês le 100
-
-
-    x = np.linspace(x1,x2)
-    
-    #fig=plt.figure()
-    
-    #ax = fig.add_subplot(111)
-   
-    eq1 = a1 * x + b1
-    eq2 = a2 * x + b2
+    b2 = 2 * y3 * x2/(x2 - x1)  #par théoreme de Thalès 
     
     def f1(x):
+        
         return a1 * x + b1
    
     def f2(x):
+        
         return a2 * x + b2
-    
-    
-#   plt.plot(x[eq1<=y3], eq1[eq1<=y3], 'b')
-#   plt.plot(x[eq2<=y3], eq2[eq2<=y3], 'r')
-#   plt.hlines(0,x1, x2)
-    
-#   plt.xlim(0,10)
-#   plt.ylim(0,10)
-#   ax.set_aspect('equal')
+
+    #On return les fonctions correspondant aux parois du prisme
     
     return f1, f2

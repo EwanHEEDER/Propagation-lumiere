@@ -2,6 +2,8 @@ import numpy as np
 
 from Prisme import prisme
 
+
+
 def n_grad(position, dictionnaire):
     
     n1, n2 = dictionnaire["Indice 1 gradient"], dictionnaire["Indice 2 gradient"]
@@ -13,11 +15,14 @@ def n_grad(position, dictionnaire):
         
         delta_n =n2 - n1
     
+        #A l'altitude 0, n = n1 donc on ajoute n1
         return (delta_n / hauteur) * position[1] + n1
     
     else:
         
         return n2
+    
+    
 
 def n_interface(position, dictionnaire):
     
@@ -32,21 +37,16 @@ def n_interface(position, dictionnaire):
     return n
 
 
-def n_prisme(position, dictionnaire):       #Possible changer verre. Par défaut --> EDF
+
+def n_prisme(position, dictionnaire):       #Possible changer verre. Par défaut --> Dense Flint
     
     Lambda = dictionnaire["Lambda"]
     n1 = dictionnaire["Indice en dehors du prisme"]
     nD, VD = dictionnaire["Verre"][0], dictionnaire["Verre"][1]
-
-
-    """ Input: position = Vecteur position (x,y)
-               Lambda = longueur donde du rayon (nm)
-               prisme = prisme dans lequel on envoie le rayon défini par ses sommets
-               n1 = Indice du milieu dans lequel se trouve le prisme
-               nd, vd = paramètres du verre; indice pour la raie de référence D & nombre d'Abbe du verre"""
     
    
-    f1, f2 = prisme(dictionnaire)      #fonction du côté gauche puis droit de notre prisme
+    #parois du prisme
+    f1, f2 = prisme(dictionnaire)      
 
     if (position[1] <= f1(position[0])) & (position[1] <= f2(position[0])): 
         
@@ -55,7 +55,7 @@ def n_prisme(position, dictionnaire):       #Possible changer verre. Par défaut
         lF=486.1
         
         B = (nD-1)/(VD*(1/(lF*lF)-1/(lC*lC)))
-        A=nD - B/(lD*lD)
+        A = nD - B/(lD*lD)
         
         n = A + B/(Lambda**2)
         
@@ -67,8 +67,14 @@ def n_prisme(position, dictionnaire):       #Possible changer verre. Par défaut
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ LENTILLE GRAVITATIONNELLE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+#Si on est en dehors de l'objet
 def phi_sup(r, dictionnaire):
+    
     return - dictionnaire["Constante G"]*dictionnaire["Masse trou noir"]/r
+
+
+#Si on se trouve dans l'objet (plus proche que son rayon)
 
 def phi_inf(r, dictionnaire):
     
@@ -82,17 +88,25 @@ def phi_inf(r, dictionnaire):
     alpha = r/R
     
     return -(G*M)/r*g*(np.log(1+C*alpha)-C*alpha/(1+C*alpha))
+
+
         
 def n_grav(position, dictionnaire):
     
     c = dictionnaire["Vitesse lumière"]
     R = dictionnaire["R"]
     centre = dictionnaire["Position trou noir"]
-#    r = np.sqrt((position[0]-centre[0])**2 + (position[1]-centre[1])**2 + (position[2]-centre[2])**2)
+    
+    #Calcul de la distanec au centre du trou noir
     r = np.linalg.norm(position - centre)
+    
+    
     if r<=R:
+        
         phi = phi_inf(r, dictionnaire)
+        
     else : 
+        
         phi = phi_sup(r, dictionnaire)
      
     

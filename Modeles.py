@@ -18,12 +18,9 @@ from Prisme import prisme
 
 def propagation_grad(dictionnaire):
     
-    #Sécurité
-    dictionnaire["Calcul d'indice"] = n_grad
+    #calcul des trajectoires
     
-    
-    v_ini = np.array([dictionnaire["Position initiale"],
-                      [np.cos(dictionnaire["Angle initial"]),np.sin(dictionnaire["Angle initial"])]])
+   
     
     s, v = RK4(dictionnaire)
     
@@ -31,8 +28,8 @@ def propagation_grad(dictionnaire):
     x = v[:,0,0][masque]
     y = v[:,0,1][masque]
     
+    #Figure
     
-#    fig = plt.figure(figsize = (10,10), dpi = 1200)
     fig = plt.figure(figsize = (10,10))
     
     ax = fig.add_subplot(111)
@@ -40,11 +37,15 @@ def propagation_grad(dictionnaire):
 
     plt.plot(x,y)
     
-    #Pour mettre en évidence le mirage
+    #Pour mettre en évidence le mirage, on trace la trajectoire apparente
     
     v = v[masque]
     
-    plt.plot(x,(1/v[-1,1,0]) * (v[-1,1,1] *  x - v[-1,0,0] * v[-1,1,1] + v[-1,0,1] * v[-1,1,0]))
+    v_ini = np.array([dictionnaire["Position initiale"],
+                      [np.cos(dictionnaire["Angle initial"]),np.sin(dictionnaire["Angle initial"])]])
+    
+    plt.plot(x,(1/v[-1,1,0]) * (v[-1,1,1] *  x - v[-1,0,0] * v[-1,1,1] + v[-1,0,1] * v[-1,1,0]),
+             label = 'Trajectoire apparente')
     
     plt.xlim(0,x[-1] +5)
     plt.ylim(0,x[-1] +5)
@@ -54,6 +55,8 @@ def propagation_grad(dictionnaire):
     plt.title("Trajet d'un rayon lumineux émis d'une hauteur h = " + str(v_ini[0,1]) + " m,"+ "\n" +
           "avec un angle de " + "{0:.2e}".format(dictionnaire["Angle initial"]) + " rad")
     
+    plt.legend(loc = 'upper left')
+    
     plt.text(x[-1]/2, 1, "n1 = " + str(dictionnaire["Indice 1 gradient"]),fontsize = 'large')
     plt.text(x[-1]/2, x[-1] , "À h = " + str(dictionnaire["Hauteur du gradient"])+
              "m, n2 = " + str(dictionnaire["Indice 1 gradient"]),fontsize = 'large')
@@ -62,16 +65,11 @@ def propagation_grad(dictionnaire):
 
 def propagation_interface(dictionnaire):
     
-    #Sécurité
-    dictionnaire["Calcul d'indice"] = n_interface
-    
     
     dioptre = dictionnaire["Position dioptre"]
     n1 = dictionnaire["Indice 1 interface"]
     n2 = dictionnaire["Indice 2 interface"]
     
-    v_ini = np.array([dictionnaire["Position initiale"],
-                      [np.cos(dictionnaire["Angle initial"]),np.sin(dictionnaire["Angle initial"])]])
     
     s, v = RK4(dictionnaire)
     
@@ -79,9 +77,10 @@ def propagation_interface(dictionnaire):
     x = v[:,0,0][masque]
     y = v[:,0,1][masque]
     
- #   fig = plt.figure(figsize = (10,10), dpi = 1200)
+    
+    #Plot trajectoire
+    
     fig = plt.figure(figsize = (10,10))
-
     
     ax = fig.add_subplot(111)
     ax.set_aspect('equal')
@@ -93,29 +92,47 @@ def propagation_interface(dictionnaire):
     
     plt.axvline(dioptre, color = 'black')
     
+    #Trajectoire sans déviation
+    
+    masque_th = v[:,0,0] <= dioptre
+    v_th = v[masque_th]
+    
+    x_th = v[:,0,0][~masque_th]
+    
+    plt.plot(x_th,(1/v_th[0,1,0]) * (v_th[0,1,1] *  x_th - v_th[0,0,0] * v_th[0,1,1] + v_th[0,0,1] * v_th[0,1,0]),
+             '.', markersize = 0.5, color = 'red', label = 'Trajectoire en absence de déviation')
+    
+    
     plt.xlabel("X (en cm)")
     plt.ylabel("Y (en cm)")
     plt.title("Trajet d'un rayon lumineux à l'interface entre un milieu d'indice n1 = " + str(n1) + "\n"+ 
               "et un milieu d'indice n2 = " +str(n2) + "\n" + "avec un angle initiale de "+
                str("%.3f"%dictionnaire["Angle initial"]) + " rad")
+    plt.legend()
+    
+    
+    
+    #Loi de Snell-Descartes
     
     normale = dioptre * np.tan(dictionnaire["Angle initial"])
     
     vecteur = v[-1,1,:]
     
     plt.axhline(normale,linestyle = '--', color = 'orange')
-    plt.text(1, 9, "n1 sin(i1) = " + str("%.3f"%(n1 * v_ini[1,1])) + "\n" + "n2 sin(i2) = " + 
-             str("%.3f"%(n2 * (vecteur[1]/np.linalg.norm(vecteur)))), fontsize = 'xx-large')
+    
+    v_ini = np.array([dictionnaire["Position initiale"],
+                      [np.cos(dictionnaire["Angle initial"]),np.sin(dictionnaire["Angle initial"])]])
+    plt.text(6, 1, "n1 sin(i1) = " + str("%.3f"%(n1 * v_ini[1,1])) + "\n" + "n2 sin(i2) = " + 
+             str("%.3f"%(n2 * (vecteur[1]/np.linalg.norm(vecteur)))), fontsize = 'large')
     
     return v
     
 def propagation_prisme(dictionnaire):
     
-    #Sécurité
-    dictionnaire["Calcul d'indice"] = n_prisme
+    #Parois du prisme
     
     f1, f2 = prisme(dictionnaire)
-    contours = np.linspace(dictionnaire["Prisme"][0],dictionnaire["Prisme"][1])
+    contours = np.linspace(dictionnaire["Prisme"][0],dictionnaire["Prisme"][1]) 
     
     fig=plt.figure(figsize = (10,10))
     
@@ -130,6 +147,7 @@ def propagation_prisme(dictionnaire):
     
     plt.hlines(0,dictionnaire["Prisme"][0], dictionnaire["Prisme"][1], color = 'black')
     
+    #Trajectoires
     
     s, v = RK4(dictionnaire)
     
@@ -137,6 +155,7 @@ def propagation_prisme(dictionnaire):
     x = v[:,0,0][masque]
     y = v[:,0,1][masque]
     
+    #Plot
     
     plt.plot(x,y,color = 'MediumSpringGreen', 
              label = "lambda = " +str(dictionnaire["Lambda"])+ " nm")
@@ -150,13 +169,13 @@ def propagation_prisme(dictionnaire):
 
 def faisceau_prisme(dictionnaire):
     
-     #Sécurité
-    dictionnaire["Calcul d'indice"] = n_prisme
-    
+    #tableau de longueurs d'onde
     wavelength = np.linspace(380,780, dictionnaire["Nombre lambda"])
 
+    #Liste des couleurs associées aux lambda
     colors = [cmx.rainbow(i) for i in np.linspace(0, 1, len(wavelength))]
     
+    #Parois du prisme
     f1, f2 = prisme(dictionnaire)
     contours = np.linspace(dictionnaire["Prisme"][0],dictionnaire["Prisme"][1])
     
@@ -176,6 +195,8 @@ def faisceau_prisme(dictionnaire):
     ax.set_aspect('equal')
     ax.set_facecolor('black')
     
+    #calcul de trajectoire pour chaque lambda
+    
     for i in tqdm.tqdm(range(wavelength.size)):
         
         dictionnaire["Lambda"] = wavelength[i]
@@ -191,8 +212,8 @@ def faisceau_prisme(dictionnaire):
 
         plt.plot(x,y,'.', markersize = 2.5, color = colors[i])
     
- #       print("i = ", i , "sur ", wavelength.size - 1) --> tqdm plus pratique
         
+    #Plot (pink floyd)
     plt.xlabel("X (cm)")
     plt.ylabel("Y (cm)")
     plt.title("Dispersion d'un faisceau lumineux de " 
@@ -225,18 +246,15 @@ def propagation_grav(dictionnaire):
     
     ax.plot3D(v[:,0,0], v[:,0,1], v[:,0,2], 'gray')
     
-    #Ajout de ka Terre, du trou noir et de la galaxie d'origine
+    
     
     xdata, ydata, zdata = dictionnaire["Position centre galaxie"]
     ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='summer', label = 'Galaxie')
     
     x,y,z = dictionnaire["Position trou noir"]
-    
-    
     ax.scatter3D(x, y, z, c=z, cmap='gnuplot', label = 'Trou noir')
     
     ax.scatter3D(0,0,0, label = "Terre")
-    
     
     
     ax.set_xlabel('X axis (m)')
@@ -265,62 +283,77 @@ def propagation_grav(dictionnaire):
     
     plt.title("Évolution de l'indice optique en fonction de la distance au centre du trou noir")
     
-    
-    
-    
-             
-                           
-            
-    
+
 
 def multi_propagation_grav(dictionnaire):
     
-    nombre_angles = dictionnaire["Nombre d'angles"]
-    angles = np.linspace(0,2*np.pi, nombre_angles)    #théta
+    
+    #Nombre de rayons partant de la galaxie 
+    nombre_angles = dictionnaire["Nombre d'angles"]   
+    
+    #tableau de valeurs de théta
+    angles = np.linspace(0,2*np.pi, nombre_angles) 
+    
+    
     ds = dictionnaire["Pas d'intégration"]
+    
+    #Plot
     
     plt.figure()    
     ax = plt.axes(projection='3d')
     
+    #Ajout de la Terre, du trou noir et de la galaxie d'origine
+        
+    xdata, ydata, zdata = dictionnaire["Position centre galaxie"]    
+    ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='summer', label = 'Galaxie')
+        
+    x,y,z = dictionnaire["Position trou noir"]    
+    ax.scatter3D(x, y, z, c=z, cmap='gnuplot', label = 'Trou noir')
+        
+    ax.scatter3D(0,0,0, label = "Terre") 
+    
+    #Calcul de trajectoire pour chaque angle initial
+    
     for i in tqdm.tqdm(range(nombre_angles)):
         
-        dictionnaire["Angle initial en 3D"][0] = angles[i]      #On recalcule la trajectoire pour un 
-                                                                # nouvel angle thêta
+        #Changement de l'angle initial dans le dictionnaire utilisé
+        
+        dictionnaire["Angle initial en 3D"][0] = angles[i]      
         
         s,v,indices = RK4_3D(dictionnaire)                      
-        masque = v[:,0,2] <= ds/2                 #on ne garde que les portions de trajectoire
-                                                  #avant la Terre
+        masque = v[:,0,2] <= ds/2         
+        
         v = v[masque]                            
         
-    
-        
         ax.plot3D(v[:,0,0], v[:,0,1], v[:,0,2], 'gray')
+    
+    
+    ax.set_xlabel('X axis (m)')        
+    ax.set_ylabel('Y axis (m)')       
+    ax.set_zlabel('Z axis (m)')
+    
+    plt.title("Trajet de " + str(nombre_angles) +" rayons lumineux depuis une galaxie située à " + 
+              str("{:.1e}".format(np.linalg.norm([xdata, ydata, zdata]))) + " m de la Terre")
+   
+    plt.legend()
         
-        xdata, ydata, zdata = dictionnaire["Position centre galaxie"]    #Point de départ des rayons
-        ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='summer')
-        
-        x,y,z = dictionnaire["Position trou noir"]                      #Position du trou noir
-        
-        
-        ax.scatter3D(x, y, z, c=z, cmap='gnuplot')
-        
-        ax.scatter3D(0,0,0, s = 80)                                     #Position de la Terre
-        
-        ax.set_xlabel('X axis (m)')
-        ax.set_ylabel('Y axis (m)')
-        ax.set_zlabel('Z axis (m)')
         
         
         
     ax.set_xlim(-5e16, 5e16)
     ax.set_ylim(-5e16, 5e16)
     ax.set_zlim(-1e22, 1e21)
+    
+    
         
 def lentille_grav():
     
     m_S = 1.988e30 #kg
     
+    #Récupération des données
     lentille = np.genfromtxt('lentille.csv', delimiter = ',')
+    
+    #Plot
 
     fig=plt.figure(figsize = (10,10))
     ax = fig.add_subplot(111)

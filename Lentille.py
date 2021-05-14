@@ -1,4 +1,6 @@
 
+
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -25,8 +27,13 @@ from Resolution_equation_mouvement import dérivée_3D, RK4_3D
 from Modeles import propagation_grav
 from Main import opti_grav
 
+#Combien de trajectoires on souhaite calculer
+
 nombre_angles = 10000
-angles = np.linspace(0,2*np.pi, nombre_angles)    #théta
+
+#Tableau des valeurs de theta
+angles = np.linspace(0,2*np.pi, nombre_angles)   
+
 
 plt.figure()
 
